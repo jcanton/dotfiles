@@ -49,10 +49,6 @@ fi
 
 # git
 alias g="git"
-alias gig='git log --graph --all --decorate --oneline'
-alias gis='git status'
-alias gic='git commit'
-alias gia='git add'
 
 # tmux
 alias tm='tmux -u'

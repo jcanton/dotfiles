@@ -41,7 +41,7 @@ endif
 
 call plug#begin()
 Plug 'chriskempson/base16-vim' " Base16 for Vim
-Plug 'ikicic/vim-tmux-navigator' " vim-tmux navigation integration
+Plug 'christoomey/vim-tmux-navigator' " vim-tmux navigation integration
 Plug 'roxma/vim-tmux-clipboard' " copy to clipboard working well (depends on vim-tmux-focus-events)
 Plug 'tmux-plugins/vim-tmux-focus-events' " needs `set -g focus-events on` in tmux.conf
 "
@@ -260,6 +260,9 @@ set viminfo^=%
 
 " Reduce updatetime (from airblad/vim-gitgutter's README)
 set updatetime=100
+
+" Disable tmux_navigator wrapping
+let  g:tmux_navigator_no_wrap = 1
 
 "------------------------------------------------------------------------------
 " Status line

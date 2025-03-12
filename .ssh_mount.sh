@@ -26,24 +26,6 @@ sshmount() {
     if [ "$diskName" == "ela" ]; then
         command="sshfs ela:/users/jcanton/ ${diskDir} ${dst_options}"
 
-    elif [ "$diskName" == "daint" ]; then
-        command="sshfs daint:/users/jcanton/ ${diskDir} ${dst_options}"
-
-    elif [ "$diskName" == "daintScratch" ]; then
-        command="sshfs daint:/scratch/snx3000/jcanton/ ${diskDir} ${dst_options}"
-
-    elif [ "$diskName" == "pr133" ]; then
-        command="sshfs daint:/project/pr133/jcanton/ ${diskDir} ${dst_options}"
-
-    elif [ "$diskName" == "g142" ]; then
-        command="sshfs daint:/store/g142/jcanton/ ${diskDir} ${dst_options}"
-
-    elif [ "$diskName" == "d121" ]; then
-        command="sshfs daint:/project/d121/jcanton/ ${diskDir} ${dst_options}"
-
-    elif [ "$diskName" == "tsa" ]; then
-        command="sshfs tsa:/scratch/jcanton/ ${diskDir} ${dst_options}"
-
     elif [ "$diskName" == "balfrin" ]; then
         command="sshfs balfrin:/scratch/mch/jcanton/ ${diskDir} ${dst_options}"
 
