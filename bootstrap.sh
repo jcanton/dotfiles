@@ -10,6 +10,7 @@ function link_item() {
 		if [ ! -L "${target}" ] || [ "$(readlink "${target}")" != "${item}" ]; then
 			command="mv ${target} ${originals_dir}/"
 			echo "$command"
+			eval "$command"
 		else
 			echo "$target is already linked to $item"
 			echo ""
@@ -20,12 +21,12 @@ function link_item() {
 	fi
 	command="ln -s ${item} ${target}"
 	echo "    $command"
-	echo ""
+	eval "$command"
 }
 
 function deploy_dotfiles() {
-	excludes=(".git" ".DS_Store" "bootstrap.sh" "README.md" "LICENSE-MIT.txt" "conditionals" "do_not_move")
-	for item in .* *; do
+	excludes=(".git" ".DS_Store" "bootstrap.sh" "README.md" "LICENSE-MIT.txt" "base16" "originals_*" "config" "conditionals" "do_not_move")
+	for item in .* * config/*; do
 		if [[ " ${excludes[@]} " =~ " ${item} " ]]; then
 			continue
 		fi
@@ -38,6 +39,7 @@ function deploy_dotfiles() {
 			read -r -p "Enter the name to link ${item} in the home directory (leave empty to skip): " link_name
 			if [ -z "${link_name}" ]; then
 				read -r -p "No name provided. Skip linking ${item}? (y/n) " -n 1
+				echo ""
 				if [[ $REPLY =~ ^[Yy]$ ]]; then
 					break
 				fi
