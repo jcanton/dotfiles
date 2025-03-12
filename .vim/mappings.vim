@@ -2,6 +2,12 @@
 " Vim mappings
 "===============================================================================
 
+" Define the primary leader key
+let mapleader = "\\"
+
+" Define the secondary leader key
+let maplocalleader = "`"
+
 " Open this file
 noremap <M-m> :exec 'pedit $HOME/.vim/mappings.vim'<CR>
 
@@ -9,7 +15,7 @@ noremap <M-m> :exec 'pedit $HOME/.vim/mappings.vim'<CR>
 " Plugin calls
 "-------------------------------------------------------------------------------
 
-" fugitive shortcuts
+" Fugitive shortcuts
 command! Gic :Git commit
 command! Gip :Git push
 
@@ -17,11 +23,11 @@ command! Gip :Git push
 noremap <C-n> :NERDTreeToggle<CR>
 
 " Prettier
-nmap <space>p :Prettier<CR>
+nmap <localleader>p :Prettier<CR>
 
-" " Some tabs/Taboo mappings
-" map <M-]> :tabnext<CR>
-" map <M-[> :tabprevious<CR>
+" Some tabs/Taboo mappings
+map <localleader>] :tabnext<CR>
+map <localleader>[ :tabprevious<CR>
 " map <M-c> :TabooOpen
 " map <M-r> :TabooRename
 " map <M-R> :TabooReset<CR>
@@ -48,25 +54,31 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 " Maps for splitting
-tnoremap <M-j> :sp<CR>
-inoremap <M-j> :sp<CR>
-nnoremap <M-j> :sp<CR>
-tnoremap <M-k> :vs<CR>
-inoremap <M-k> :vs<CR>
-nnoremap <M-k> :vs<CR>
+tnoremap <localleader>j :sp<CR>
+inoremap <localleader>j :sp<CR>
+nnoremap <localleader>j :sp<CR>
+tnoremap <localleader>k :vs<CR>
+inoremap <localleader>k :vs<CR>
+nnoremap <localleader>k :vs<CR>
 
 " Force redraw
-nnoremap <M-l> :redraw!<CR>
+nnoremap <localleader>l :redraw!<CR>
 
-" Disable highlight when <leader><cr> is pressed
-noremap <silent> <leader><cr> :noh<cr>
+" Disable highlight
+tnoremap <silent> <localleader><cr> :noh<cr>
+inoremap <silent> <localleader><cr> :noh<cr>
+nnoremap <silent> <localleader><cr> :noh<cr>
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
 " map <C-a>te :tabedit <c-r>=expand("%:p:h")<cr>/
 
 " Switch CWD to the directory of the open buffer
-map <M>cd :cd %:p:h<cr>:pwd<cr>
+map <localleader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Return to normal mode with Esc (in terminal)
 tnoremap <Esc> <C-\><C-n>
+
+noremap <leader>ll :VimtexCompileSS<cr>
+autocmd BufRead,BufNewFile *.tex map <F2> <ESC>:w<CR><leader>ll
+autocmd BufRead,BufNewFile *.tex map <F3> <ESC>:w<CR><leader>lv

@@ -1,4 +1,4 @@
-"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+"==============================================================================
 "
 " Set location of vimDir
 let vimDir = '$HOME/.vim'
@@ -265,9 +265,6 @@ endif
 " Vimtex configuration
 "------------------------------------------------------------------------------
 let g:vimtex_view_method='skim'
-noremap <leader>ll :VimtexCompileSS<cr>
-autocmd BufRead,BufNewFile *.tex map <F2> <ESC>:w<CR><leader>ll
-autocmd BufRead,BufNewFile *.tex map <F3> <ESC>:w<CR><leader>lv
 
 "------------------------------------------------------------------------------
 " Mappings
@@ -277,5 +274,4 @@ if filereadable(glob("$HOME/.vim/mappings.vim"))
    source $HOME/.vim/mappings.vim
 endif
 
-"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-"
+"==============================================================================
