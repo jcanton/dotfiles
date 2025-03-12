@@ -57,3 +57,7 @@ if [ -f ~/.ssh_mount.sh ]; then
     . ~/.ssh_mount.sh
 fi
 
+# machine specific configuration
+if [ -f ~/.bashrc.local ]; then
+	. ~/.bashrc.local
+fi

@@ -1,0 +1,5 @@
+# OsX sources this file but I want to keep it empty and leave my stuff in ~/.bashrc
+#
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
