@@ -10,10 +10,9 @@ alias -- -="cd -"
 
 # Shortcuts
 #alias d="cd ~/Documents/Dropbox"
-alias dl="cd ~/Downloads"
-alias dt="cd ~/Desktop"
-#alias p="cd ~/projects"
-alias g="git"
+#alias dl="cd ~/Downloads"
+#alias dt="cd ~/Desktop"
+alias p="cd ~/projects"
 alias sc="cd $SCRATCH"
 
 # Detect which `ls` flavor is in use
@@ -25,29 +24,49 @@ else # macOS `ls`
 	export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
 fi
 
-# List all files colorized in long format
-alias l="ls -lF ${colorflag}"
-
-# List all files colorized in long format, excluding . and ..
-alias la="ls -lAF ${colorflag}"
-
-# List only directories
+# ls
+alias l="ls -F ${colorflag}"
+alias la="ls -lFh ${colorflag}"
+alias ll="ls -lAFh ${colorflag}"
 alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
-
-# Always use color output for `ls`
 alias ls="command ls ${colorflag}"
 
-# Always enable colored `grep` output
-# Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
+#------------------------------------------------------------------
+
+# grep
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
-# Enable aliases to be sudo’ed
-alias sudo='sudo '
+# tree
+alias tree='tree -h'
 
-# Get week number
-alias week='date +%V'
+if `uname -a | grep -q -i Darwin`; then
+    alias du='du -h -d 1'
+else
+    alias du='du -h --max-depth=1'
+fi
+
+# git
+alias g="git"
+alias gig='git log --graph --all --decorate --oneline'
+alias gis='git status'
+alias gic='git commit'
+alias gia='git add'
+
+# tmux
+alias tm='tmux -u'
+alias tml='tmux ls'
+alias tmn='tmux -u new -s'
+alias tma='tmux -u attach -t'
+
+#------------------------------------------------------------------
+
+## Enable aliases to be sudo’ed
+#alias sudo='sudo '
+
+## Get week number
+#alias week='date +%V'
 
 ## Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 #alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
@@ -70,14 +89,14 @@ alias week='date +%V'
 ## Clean up LaunchServices to remove duplicates in the “Open With” menu
 #alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 
-# Canonical hex dump; some systems have this symlinked
-command -v hd > /dev/null || alias hd="hexdump -C"
+## Canonical hex dump; some systems have this symlinked
+#command -v hd > /dev/null || alias hd="hexdump -C"
 
-# macOS has no `md5sum`, so use `md5` as a fallback
-command -v md5sum > /dev/null || alias md5sum="md5"
+## macOS has no `md5sum`, so use `md5` as a fallback
+#command -v md5sum > /dev/null || alias md5sum="md5"
 
-# macOS has no `sha1sum`, so use `shasum` as a fallback
-command -v sha1sum > /dev/null || alias sha1sum="shasum"
+## macOS has no `sha1sum`, so use `shasum` as a fallback
+#command -v sha1sum > /dev/null || alias sha1sum="shasum"
 
 ## JavaScriptCore REPL
 #jscbin="/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resources/jsc";
@@ -103,8 +122,8 @@ command -v sha1sum > /dev/null || alias sha1sum="shasum"
 #alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 #alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
 
-# URL-encode strings
-alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+## URL-encode strings
+#alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 
 ## Merge PDF files, preserving hyperlinks
 ## Usage: `mergepdf input{1,2,3}.pdf`
@@ -121,15 +140,15 @@ alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.ar
 ## Airport CLI alias
 #alias airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
 
-# Intuitive map function
-# For example, to list all directories that contain a certain file:
-# find . -name .gitattributes | map dirname
-alias map="xargs -n1"
+## Intuitive map function
+## For example, to list all directories that contain a certain file:
+## find . -name .gitattributes | map dirname
+#alias map="xargs -n1"
 
-# One of @janmoesen’s ProTip™s
-for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
-	alias "${method}"="lwp-request -m '${method}'"
-done
+## One of @janmoesen’s ProTip™s
+#for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
+#	alias "${method}"="lwp-request -m '${method}'"
+#done
 
 ## Stuff I never really use but cannot delete either because of http://xkcd.com/530/
 #alias stfu="osascript -e 'set volume output muted true'"
@@ -142,8 +161,8 @@ done
 ## Lock the screen (when going AFK)
 #alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
 
-# Reload the shell (i.e. invoke as a login shell)
-alias reload="exec ${SHELL} -l"
+## Reload the shell (i.e. invoke as a login shell)
+#alias reload="exec ${SHELL} -l"
 
-# Print each PATH entry on a separate line
-alias path='echo -e ${PATH//:/\\n}'
+## Print each PATH entry on a separate line
+#alias path='echo -e ${PATH//:/\\n}'

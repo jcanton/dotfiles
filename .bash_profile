@@ -1,5 +1,8 @@
 ## Add `~/bin` to the `$PATH`
 #export PATH="$HOME/bin:$PATH";
+export PATH="$HOME/.local/bin:$PATH"
+export INCLUDE="$HOME/.local/include:$INCLUDE"
+export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
 
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
@@ -48,3 +51,9 @@ complete -W "NSGlobalDomain" defaults;
 
 # Add `killall` tab completion for common apps
 complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
+
+# sshMount
+if [ -f ~/.ssh_mount.sh ]; then
+    . ~/.ssh_mount.sh
+fi
+
