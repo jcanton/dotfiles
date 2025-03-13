@@ -53,11 +53,6 @@ complete -W "NSGlobalDomain" defaults;
 # Add `killall` tab completion for common apps
 complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
 
-# sshMount
-if [ -f ~/.ssh_mount.sh ]; then
-    . ~/.ssh_mount.sh
-fi
-
 # machine specific configuration
 if [ -f ~/.bashrc.local ]; then
 	. ~/.bashrc.local

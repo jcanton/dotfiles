@@ -18,3 +18,9 @@ set_brightness() {
     command="ddcutil --display 1 setvcp 10 ${brightness_value}"
     eval $command
 }
+
+set_resolution() {
+    resolution_value=$1
+    command="xrandr --output HDMI-1 --mode ${resolution_value}"
+    eval $command
+}
