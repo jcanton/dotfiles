@@ -52,7 +52,39 @@ complete -W "NSGlobalDomain" defaults;
 # Add `killall` tab completion for common apps
 complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
 
+#------------------------------------------------------------------------------
+# conda
+#
+loadMiniconda() {
+    if ! [[ ":$PATH:" == *"miniconda3"* ]]; then
+        export NON_CONDA_PATH="$PATH"
+        export NON_CONDA_PYTHONPATH=""
+        #
+        export PATH="$HOME/miniconda3/bin:$PATH"
+        export PYTHONPATH="$HOME/miniconda3/lib/python3.11/site-packages:$PYTHONPATH"
+        export PROJ_LIB="$HOME/miniconda3/share/proj"
+        export MATPLOTLIBRC="$HOME/jc_home/matplotlib/matplotlibrc"
+    fi
+    export CONDA_LOADED="yes"
+}
+unloadMiniconda() {
+    export PATH="$NON_CONDA_PATH"
+    export PYTHONPATH="$NON_CONDA_PYTHONPATH"
+    # unalias tm tml tmn tma
+    # unalias rgg grep gr
+    # unalias cd cdi
+    export CONDA_LOADED="no"
+}
+
+if [[ $(hostname -s) = balfrin* ]]; then
+    export CONDA_LOADED="no"
+else
+    loadMiniconda
+fi
+
+#------------------------------------------------------------------------------
 # machine specific configuration
+#
 if [ -f ~/.bashrc.local ]; then
     . ~/.bashrc.local
 fi

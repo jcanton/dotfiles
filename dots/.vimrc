@@ -30,8 +30,8 @@ if !exists('g:vscode')
     Plug 'gcmt/taboo.vim' " Few utilities for pretty tabs (including rename)
     Plug 'vim-airline/vim-airline' " Lean & mean status/tabline for vim that's light as air
     Plug 'vim-airline/vim-airline-themes' " This is the official theme repository for vim-airline
-    Plug 'reedes/vim-pencil' " Rethinking Vim as a tool for writers
     "
+    Plug 'dense-analysis/ale' " ALE
     Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
     Plug 'airblade/vim-gitgutter' " A Vim plugin which shows a git diff in the gutter (sign column) and stages/undoes hunks and partial hunks.
     Plug 'kshenoy/vim-signature' " Marks on the left side
@@ -50,7 +50,6 @@ if !exists('g:vscode')
     Plug 'chriskempson/base16-vim' " Base16 for Vim
     Plug 'luochen1990/rainbow' " Rainbow Parentheses Improved
     Plug 'ryanoasis/vim-devicons' " ALWAYS LOAD LAST Adds file type icons to Vim plugins
-    Plug 'honza/vim-snippets'  " snippets for the engines (somehow disappeared from CoC - seems to be back now, but not working without this?)
     call plug#end()
 
     " Run PlugInstall if there are missing plugins
@@ -94,9 +93,6 @@ set showcmd
 
 " do not wrap lines by default
 set nowrap
-
-" but default pencil to 'soft' if initialized
-let g:pencil#wrapModeDefault = 'soft'
 
 " use mouse everywhere
 set mouse=a
