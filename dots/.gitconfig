@@ -28,6 +28,9 @@
     # Clone a repository including all submodules.
     cl = clone --recursive
 
+    # Add
+    a = add
+
     # Commit
     c = commit
 

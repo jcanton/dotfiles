@@ -5,6 +5,7 @@ function link_it() {
     target=$2
     command="ln -s ${item} ${target}"
     echo "    $command"
+            echo ""
     eval "$command"
 }
 
@@ -20,8 +21,12 @@ function link_item() {
             echo "    ${target} does not exist, link the directory"
             link_it "${item}" "${target}"
             return
+        elif [ -L "${target}" ] || [ "$(readlink "${target}")" == "${item}" ]; then
+            echo "    ${target} is a symlink and points here, do nothing"
+            echo ""
+            return
         else
-            echo "    ${target} already exists"
+            echo "    ${target} already exists, let's link it's content"
             # Recursively link all files in the directory
             for file in "${item}"/* "${item}"/.*; do
                 [[ -e "$file" ]] || continue  # Skip the directory itself
@@ -44,7 +49,6 @@ function link_item() {
         echo "$target does not exist"
         link_it "${item}" "${target}"
     fi
-    echo ""
 }
 
 function deploy_dotfiles() {
@@ -62,6 +66,7 @@ function deploy_dotfiles() {
                 read -r -p "No name provided. Skip linking ${item}? (y/n) " -n 1
                 echo ""
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    echo ""
                     break
                 fi
             else
@@ -107,6 +112,7 @@ function setup_tmux() {
     printf "OK: Completed\n"
 }
 
+
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit;
 git pull origin main;
 
@@ -114,7 +120,6 @@ echo ""
 deploy_dotfiles;
 
 setup_tmux;
-
 
 unset deploy_dotfiles;
 unset link_item;
