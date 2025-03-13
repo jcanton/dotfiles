@@ -240,7 +240,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 "------------------------------------------------------------------------------
 
 " Default to insert mode when opening a new term
-autocmd TermOpen term://* startinsert
+" autocmd TermOpen term://* startinsert
 
 " always use tmux
 let g:slime_target = 'tmux'

@@ -16,6 +16,7 @@ Thumbs.db
 # repos specific
 originals_*
 
-# vim related
+# dots additions
 dots/.vim/autoload
 dots/.vim/plugged
+dots/.tmux/plugins

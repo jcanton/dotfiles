@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# TERM
+if [ "${TERM}" = "xterm-256color" ]; then
+    export TERM='screen-256color'
+fi
+#if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+#    export TERM='gnome-256color';
+#elif infocmp xterm-256color >/dev/null 2>&1; then
+#    export TERM='xterm-256color';
+#fi;
+
 # Make vim the default editor.
 export EDITOR='vim';
 
