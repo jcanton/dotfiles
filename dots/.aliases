@@ -13,6 +13,12 @@ alias .....="cd ../../../.."
 alias p="cd ~/projects"
 alias sc="cd $SCRATCH"
 
+# vim / nvim
+if type nvim > /dev/null; then
+    alias vim="nvim"
+    alias vimdiff="nvim -d"
+fi
+
 # ls
 # enable color support of ls
 if [ -x /usr/bin/dircolors ]; then

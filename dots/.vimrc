@@ -10,50 +10,60 @@ endif
 "------------------------------------------------------------------------------
 " => Vim-plug
 "------------------------------------------------------------------------------
+
 " Install vim-plug if not found
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 
+" Always load these plugins
 call plug#begin()
-Plug 'tpope/vim-repeat' " enable repeating supported plugin maps with .
-Plug 'tpope/vim-surround' " surround.vim: Delete/change/add parentheses/quotes/XML-tags/much more with ease
-Plug 'gcmt/taboo.vim' " Few utilities for pretty tabs (including rename)
-Plug 'vim-airline/vim-airline' " Lean & mean status/tabline for vim that's light as air
-Plug 'vim-airline/vim-airline-themes' " This is the official theme repository for vim-airline
-Plug 'reedes/vim-pencil' " Rethinking Vim as a tool for writers
-"
-Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
-Plug 'airblade/vim-gitgutter' " A Vim plugin which shows a git diff in the gutter (sign column) and stages/undoes hunks and partial hunks.
-Plug 'kshenoy/vim-signature' " Marks on the left side
-Plug 'ctrlpvim/ctrlp.vim' " Full path fuzzy file, buffer, mru, tag, ... finder for Vim
-Plug 'preservim/nerdtree' " The NERDTree
-Plug 'Xuyuanp/nerdtree-git-plugin' " Plugin for git colors in NERDTree
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight' " Extra syntax and highlight for nerdtree files
-"
-Plug 'lervag/vimtex' " VimTeX is a modern Vim and Neovim filetype and syntax plugin for LaTeX files.
-Plug 'jpalardy/vim-slime', { 'for': 'python' } " Send code to a REPL
-"
-Plug 'christoomey/vim-tmux-navigator' " vim-tmux navigation integration
-Plug 'roxma/vim-tmux-clipboard' " copy to clipboard working well (depends on vim-tmux-focus-events)
-Plug 'tmux-plugins/vim-tmux-focus-events' " needs `set -g focus-events on` in tmux.conf
-"
-Plug 'chriskempson/base16-vim' " Base16 for Vim
-Plug 'luochen1990/rainbow' " Rainbow Parentheses Improved
-Plug 'ryanoasis/vim-devicons' " ALWAYS LOAD LAST Adds file type icons to Vim plugins
-Plug 'honza/vim-snippets'  " snippets for the engines (somehow disappeared from CoC - seems to be back now, but not working without this?)
+Plug 'adelarsq/vim-matchit' " extended matching for the % operator
 call plug#end()
 
-" Run PlugInstall if there are missing plugins
-autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-  \| PlugInstall --sync | source $MYVIMRC
-\| endif
+if !exists('g:vscode')
+    " Only load these when not vscode
+    call plug#begin()
+    Plug 'tpope/vim-repeat' " enable repeating supported plugin maps with .
+    Plug 'tpope/vim-surround' " surround.vim: Delete/change/add parentheses/quotes/XML-tags/much more with ease
+    Plug 'gcmt/taboo.vim' " Few utilities for pretty tabs (including rename)
+    Plug 'vim-airline/vim-airline' " Lean & mean status/tabline for vim that's light as air
+    Plug 'vim-airline/vim-airline-themes' " This is the official theme repository for vim-airline
+    Plug 'reedes/vim-pencil' " Rethinking Vim as a tool for writers
+    "
+    Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
+    Plug 'airblade/vim-gitgutter' " A Vim plugin which shows a git diff in the gutter (sign column) and stages/undoes hunks and partial hunks.
+    Plug 'kshenoy/vim-signature' " Marks on the left side
+    Plug 'ctrlpvim/ctrlp.vim' " Full path fuzzy file, buffer, mru, tag, ... finder for Vim
+    Plug 'preservim/nerdtree' " The NERDTree
+    Plug 'Xuyuanp/nerdtree-git-plugin' " Plugin for git colors in NERDTree
+    Plug 'tiagofumo/vim-nerdtree-syntax-highlight' " Extra syntax and highlight for nerdtree files
+    "
+    Plug 'lervag/vimtex' " VimTeX is a modern Vim and Neovim filetype and syntax plugin for LaTeX files.
+    Plug 'jpalardy/vim-slime', { 'for': 'python' } " Send code to a REPL
+    "
+    Plug 'christoomey/vim-tmux-navigator' " vim-tmux navigation integration
+    Plug 'roxma/vim-tmux-clipboard' " copy to clipboard working well (depends on vim-tmux-focus-events)
+    Plug 'tmux-plugins/vim-tmux-focus-events' " needs `set -g focus-events on` in tmux.conf
+    "
+    Plug 'chriskempson/base16-vim' " Base16 for Vim
+    Plug 'luochen1990/rainbow' " Rainbow Parentheses Improved
+    Plug 'ryanoasis/vim-devicons' " ALWAYS LOAD LAST Adds file type icons to Vim plugins
+    Plug 'honza/vim-snippets'  " snippets for the engines (somehow disappeared from CoC - seems to be back now, but not working without this?)
+    call plug#end()
+
+    " Run PlugInstall if there are missing plugins
+    autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+      \| PlugInstall --sync | source $MYVIMRC
+    \| endif
+endif
 
 "------------------------------------------------------------------------------
 " General
 "------------------------------------------------------------------------------
 
+" Do not use swap files
 set noswapfile
 
 " Default splits below and to the right
@@ -66,15 +76,8 @@ set splitright
 " Sets how many lines of history VIM has to remember
 set history=700
 
-" Enable filetype plugins (already enabled for vim-addon-manager)
-filetype plugin on
-filetype indent on
-
 " Set to auto read when a file is changed from the outside
 set autoread
-
-" Enable extended % matching (make it work with if/elseif/else/end)
-runtime macros/matchit.vim
 
 " Turn on Rainbow parenthesis
 let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
@@ -139,9 +142,6 @@ autocmd GUIEnter * set visualbell t_vb=
 "------------------------------------------------------------------------------
 " Colors and Fonts
 "------------------------------------------------------------------------------
-
-" Enable syntax highlighting
-syntax enable
 
 " The following lines enable true color support
 if exists('+termguicolors')
