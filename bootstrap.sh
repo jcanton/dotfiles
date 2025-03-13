@@ -3,9 +3,9 @@
 function link_it() {
     item=$1
     target=$2
-	command="ln -s ${item} ${target}"
-	echo "    $command"
-	eval "$command"
+    command="ln -s ${item} ${target}"
+    echo "    $command"
+    eval "$command"
 }
 
 function link_item() {
@@ -18,15 +18,15 @@ function link_item() {
         echo "${item} is a directory"
         if [ ! -d "${target}" ]; then
             echo "    ${target} does not exist, link the directory"
-			link_it "${item}" "${target}"
-			return
+            link_it "${item}" "${target}"
+            return
         else
             echo "    ${target} already exists"
-        	# Recursively link all files in the directory
-        	for file in "${item}"/* "${item}"/.*; do
-        	    [[ -e "$file" ]] || continue  # Skip the directory itself
-        	    link_item "${file}" "${target}/$(basename ${file})"
-        	done
+            # Recursively link all files in the directory
+            for file in "${item}"/* "${item}"/.*; do
+                [[ -e "$file" ]] || continue  # Skip the directory itself
+                link_item "${file}" "${target}/$(basename ${file})"
+            done
         fi
     elif [ -e "${target}" ]; then
         if [ ! -L "${target}" ] || [ "$(readlink "${target}")" != "${item}" ]; then
@@ -34,7 +34,7 @@ function link_item() {
             command="mv ${target} ${originals_dir}/"
             echo "$command"
             eval "$command"
-			link_it "${item}" "${target}"
+            link_it "${item}" "${target}"
         else
             echo "${target} is already linked to ${item}"
             echo ""
@@ -42,7 +42,7 @@ function link_item() {
         fi
     else
         echo "$target does not exist"
-		link_it "${item}" "${target}"
+        link_it "${item}" "${target}"
     fi
     echo ""
 }
@@ -99,7 +99,7 @@ function setup_tmux() {
     # TPM requires running tmux server, as soon as `tmux start-server` does not work
     # create dump __noop session in detached mode, and kill it when plugins are installed
     printf "Install TPM plugins\n"
-    tmux new -d -s __noop >/dev/null 2>&1 || true 
+    tmux new -d -s __noop >/dev/null 2>&1 || true
     tmux set-environment -g TMUX_PLUGIN_MANAGER_PATH "~/.tmux/plugins"
     "$HOME"/.tmux/plugins/tpm/bin/install_plugins || true
     tmux kill-session -t __noop >/dev/null 2>&1 || true
