@@ -3,8 +3,8 @@
 " Set location of vimDir
 let vimDir = '$HOME/.vim'
 if stridx(&runtimepath, expand(vimDir)) == -1
-  " vimDir is not on runtimepath, add it
-  let &runtimepath.=','.vimDir
+    " vimDir is not on runtimepath, add it
+    let &runtimepath.=','.vimDir
 endif
 
 "------------------------------------------------------------------------------
