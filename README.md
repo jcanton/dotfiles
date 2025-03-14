@@ -6,7 +6,7 @@
 
 ### Using Git and the bootstrap script
 
-You can clone the repository wherever you want. (I like to keep it in `~/projects/dotfiles`, with `~/dotfiles` as a symlink.) The bootstrapper script will pull in the latest version and copy the files to your home folder.
+You can clone the repository wherever you want. (I like to keep it in `~/projects/dotfiles`.) The bootstrapper script will copy the files to your home folder.
 
 ```bash
 git clone git@github.com:jcanton/dotfiles.git && cd dotfiles && source bootstrap.sh
@@ -15,14 +15,9 @@ git clone git@github.com:jcanton/dotfiles.git && cd dotfiles && source bootstrap
 To update, `cd` into your local `dotfiles` repository and then:
 
 ```bash
-source bootstrap.sh
+git pull
 ```
 
-Alternatively, to update while avoiding the confirmation prompt:
-
-```bash
-set -- -f; source bootstrap.sh
-```
 
 ### Specify the `$PATH`
 
