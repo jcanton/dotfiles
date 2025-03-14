@@ -5,8 +5,8 @@ function link_it() {
     target=$2
     command="ln -s ${item} ${target}"
     echo "    $command"
-            echo ""
-    eval "$command"
+    echo ""
+    #eval "$command"
 }
 
 function link_item() {
@@ -29,7 +29,7 @@ function link_item() {
             echo "    ${target} already exists, let's link it's content"
             # Recursively link all files in the directory
             for file in "${item}"/* "${item}"/.*; do
-                [[ -e "$file" ]] || continue  # Skip the directory itself
+                [[ -e "$file" ]] || continue # Skip the directory itself
                 link_item "${file}" "${target}/$(basename ${file})"
             done
         fi
@@ -38,7 +38,7 @@ function link_item() {
             echo "${target} already exists, moving to ${originals_dir}"
             command="mv ${target} ${originals_dir}/"
             echo "$command"
-            eval "$command"
+            #eval "$command"
             link_it "${item}" "${target}"
         else
             echo "${target} is already linked to ${item}"
@@ -54,12 +54,14 @@ function link_item() {
 function deploy_dotfiles() {
 
     for item in dots/* dots/.*; do
-        [[ -e "$item" ]] || continue  # Skip the directory itself
+        [[ -e "$item" ]] || continue # Skip the directory itself
+        [[ "$item" == "dots/." || "$item" == "dots/.." ]] && continue # Skip . and ..
         link_item "$(pwd)/${item}" "${HOME}/$(basename ${item})"
     done
 
     for item in conditionals/* conditionals/.*; do
-        [[ -e "$item" ]] || continue  # Skip the directory itself
+        [[ -e "$item" ]] || continue # Skip the directory itself
+        [[ "$item" == "conditionals/." || "$item" == "conditionals/.." ]] && continue # Skip . and ..
         while true; do
             read -r -p "Enter the name to link ${item} in the home directory (leave empty to skip): " link_name
             if [ -z "${link_name}" ]; then
@@ -77,7 +79,6 @@ function deploy_dotfiles() {
     done
 }
 
-
 function setup_tmux() {
     set -e
     set -u
@@ -87,8 +88,11 @@ function setup_tmux() {
         type "$1" &>/dev/null
     }
 
-    REPODIR="$(cd "$(dirname "$0")"; pwd -P)"
-    cd "$REPODIR";
+    REPODIR="$(
+        cd "$(dirname "$0")"
+        pwd -P
+    )"
+    cd "$REPODIR"
 
     if ! is_app_installed tmux; then
         printf "WARNING: \"tmux\" command is not found. Install it first\n"
@@ -112,15 +116,14 @@ function setup_tmux() {
     printf "OK: Completed\n"
 }
 
-
-cd "$(dirname "${BASH_SOURCE[0]}")" || exit;
-git pull origin main;
+cd "$(dirname "${BASH_SOURCE[0]}")" || exit
+git pull origin main
 
 echo ""
-deploy_dotfiles;
+deploy_dotfiles
 
-setup_tmux;
+setup_tmux
 
-unset deploy_dotfiles;
-unset link_item;
-unset setup_tmux;
+unset deploy_dotfiles
+unset link_item
+unset setup_tmux
