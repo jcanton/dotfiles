@@ -7,3 +7,6 @@ vim.g.snacks_animate = false
 
 -- disable relative line numbers
 vim.opt.relativenumber = false
+
+-- default dark background
+vim.go.background = "dark"

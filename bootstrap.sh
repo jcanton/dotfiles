@@ -6,7 +6,7 @@ function link_it() {
     command="ln -s ${item} ${target}"
     echo "    $command"
     echo ""
-    #eval "$command"
+    eval "$command"
 }
 
 function link_item() {
@@ -38,7 +38,7 @@ function link_item() {
             echo "${target} already exists, moving to ${originals_dir}"
             command="mv ${target} ${originals_dir}/"
             echo "$command"
-            #eval "$command"
+            eval "$command"
             link_it "${item}" "${target}"
         else
             echo "${target} is already linked to ${item}"
@@ -117,7 +117,6 @@ function setup_tmux() {
 }
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit
-git pull origin main
 
 echo ""
 deploy_dotfiles

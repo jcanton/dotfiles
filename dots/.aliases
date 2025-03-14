@@ -15,10 +15,8 @@ alias p="cd ~/projects"
 alias sc="cd $SCRATCH"
 
 # vim / nvim
-if type nvim > /dev/null; then
-    alias vim="nvim"
-    alias vimdiff="nvim -d"
-fi
+alias vim="nvim"
+alias vimdiff="nvim -d"
 
 # ls
 # enable color support of ls
@@ -40,7 +38,7 @@ alias egrep='egrep --color=auto'
 alias tree='tree -h'
 
 # du
-if `uname -a | grep -q -i Darwin`; then
+if $(uname -a | grep -q -i Darwin); then
     alias du='du -h -d 1'
 else
     alias du='du -h --max-depth=1'
