@@ -12,7 +12,7 @@ if [ -n "${VSCODE_INVOKING}" ]; then
     # set colors
     export CLICOLOR=1
     # Base16 Shell
-    source $HOME/projects/dotfiles/base16/base16-solarized-light.sh
+    source $HOME/projects/tinted-shell/scripts/base16-tokyo-night-terminal-storm.sh
 fi
 
 # gt4py
