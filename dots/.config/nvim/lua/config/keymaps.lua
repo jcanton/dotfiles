@@ -2,7 +2,12 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
--- DAP
+--------------------------------------------------------------------------------
+--- DAP ------------------------------------------------------------------------
+--- https://lazyvim-ambitious-devs.phillips.codes/course/chapter-17/ -----------
+--- https://github.com/mfussenegger/nvim-dap/blob/a720d4966f758ab22e8ec28812b6df90a53e0f02/doc/dap.txt#L496
+--------------------------------------------------------------------------------
+
 vim.keymap.set("n", "<F5>", function()
     require("dap").continue()
 end)
