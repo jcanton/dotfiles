@@ -4,8 +4,7 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # Base16 Shell
 export CLICOLOR=1
-source $HOME/projects/tinted-shell/scripts/base16-tokyo-night-terminal-storm.sh
-# iTerm actually gets its colors from profiles, this is here for terminal
+# source $HOME/projects/tinted-shell/scripts/base16-tokyo-night-terminal-storm.sh
 
 # gt4py
 export GT4PY_BUILD_CACHE_LIFETIME=PERSISTENT
