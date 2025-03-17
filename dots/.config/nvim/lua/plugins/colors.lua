@@ -1,4 +1,5 @@
 if true then
+    -- let's use the pre-installed colorschemes
     return {}
 end
 
@@ -24,15 +25,7 @@ return {
         end,
     },
 
-    -- add tokyonight
-    {
-        "folke/tokyonight.nvim",
-        lazy = false,
-        priority = 1000,
-        opts = {},
-    },
-
-    -- Configure LazyVim to load one
+    -- Configure LazyVim to load one (does not work?!?)
     {
         "LazyVim/LazyVim",
         opts = {
