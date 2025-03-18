@@ -96,7 +96,7 @@ else
     hostStyle="${yellow}"
 fi
 
-sepcolor="$white"
+sepcolor="$black"
 
 # Set the terminal title and prompt.
 PS1="\[\033]0;\W\007\]" # working directory base name

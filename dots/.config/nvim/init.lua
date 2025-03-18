@@ -2,4 +2,7 @@
 require("config.lazy")
 
 -- default background
-vim.go.background = "dark"
+-- vim.go.background = "dark"
+
+-- colorscheme
+vim.cmd.colorscheme("catppuccin-frappe")

@@ -1,8 +1,14 @@
 # pi specific settings:
 
-# Base16 Shell
+# Snap packages (damn alacritty)
+export PATH="$PATH:/snap/bin"
+
+export TERMINAL="alacritty"
+
+
+# Colors
 export CLICOLOR=1
-source $HOME/projects/tinted-shell/scripts/base16-tokyo-night-terminal-light.sh
+#source $HOME/projects/tinted-shell/scripts/base16-tokyo-night-terminal-light.sh
 
 # gt4py
 export GT4PY_BUILD_CACHE_LIFETIME=PERSISTENT

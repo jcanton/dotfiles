@@ -1,0 +1,21 @@
+[general]
+import = ["~/projects/alacritty-theme/themes/catppuccin_latte.toml"]
+
+[font]
+size = 10.0
+
+[font.normal]
+family = "BlexMonoNerdFont"
+style = "Regular"
+
+[font.bold]
+family = "BlexMonoNerdFont"
+style = "Bold"
+
+[font.bold_italic]
+family = "BlexMonoNerdFont"
+style = "Bold Italic"
+
+[font.italic]
+family = "BlexMonoNerdFont"
+style = "Italic"
