@@ -2,10 +2,10 @@ return {
     -- slime (REPL integration)
     "jpalardy/vim-slime",
     keys = {
-        { "<leader>r", desc = "Slime", mode = { "v", "n" } },
-        { "<leader>rc", vim.cmd.SlimeConfig, desc = "Slime Config" },
+        { "<leader>j", desc = "Slime", mode = { "v", "n" } },
+        { "<leader>jc", vim.cmd.SlimeConfig, desc = "Slime Config" },
         -- { "<leader>rr", "<Plug>SlimeSendCell<BAR>/^# %%<CR>", desc = "Slime Send Cell" },
-        { "<leader>rr", ":<C-u>'<,'>SlimeSend<CR>", mode = "v", desc = "Slime Send Selection" },
+        { "<leader>jj", ":<C-u>'<,'>SlimeSend<CR>", mode = "v", desc = "Slime Send Selection" },
     },
     config = function()
         local tmux = os.getenv("TMUX")
