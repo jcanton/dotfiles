@@ -20,3 +20,14 @@ originals_*
 dots/.vim/autoload
 dots/.vim/plugged
 dots/.tmux/plugins
+
+# nvim stuff
+tt.*
+.tests
+doc/tags
+debug
+.repro
+foo.*
+*.log
+data
+lazy-lock.json

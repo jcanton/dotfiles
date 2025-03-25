@@ -22,6 +22,10 @@ return {
                 },
             },
         },
+        keymap = {
+            preset = "super-tab",
+            ["<Right>"] = { "accept", "fallback" },
+        },
     },
     opts_extend = { "sources.default" },
 }
