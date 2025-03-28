@@ -2,17 +2,14 @@
 
 # TERM
 export TERM='xterm-256color'
-# if [ "${TERM}" = "xterm-256color" ]; then
-#     export TERM='screen-256color'
-# fi
-#if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-#    export TERM='gnome-256color';
-#elif infocmp xterm-256color >/dev/null 2>&1; then
-#    export TERM='xterm-256color';
-#fi;
 
 # Make vim/nvim the default editor.
 export EDITOR='nvim'
+
+# Add to the `$PATH`
+export PATH="$HOME/.local/bin:$PATH"
+export INCLUDE="$HOME/.local/include:$INCLUDE"
+export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
 
 # Enable persistent REPL history for `node`.
 export NODE_REPL_HISTORY=~/.node_history
@@ -46,3 +43,19 @@ export GPG_TTY=$(tty)
 
 # Hide the “default interactive shell is now zsh” warning on macOS.
 export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# Colors
+# greys and catppuccin complementray triad
+export jc_color00="233"
+export jc_color01="238"
+export jc_color02="246"
+export jc_color03="255"
+export jc_color11="222"
+export jc_color12="144"
+export jc_color21="122"
+export jc_color22="065"
+export jc_color31="177"
+export jc_color32="096"
+export jc_color_ok="$jc_color02"
+export jc_color_warn="220"
+export jc_color_stress="124"

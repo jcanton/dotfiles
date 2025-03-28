@@ -1,15 +1,10 @@
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
-for file in ~/.{path,bash_prompt,exports,aliases,functions,extra}; do
+for file in ~/.{path,exports,aliases,functions,bash_prompt,extra}; do
     [ -r "$file" ] && [ -f "$file" ] && source "$file"
 done
 unset file
-
-# Add to the `$PATH`
-export PATH="$HOME/.local/bin:$PATH"
-export INCLUDE="$HOME/.local/include:$INCLUDE"
-export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
 
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob
