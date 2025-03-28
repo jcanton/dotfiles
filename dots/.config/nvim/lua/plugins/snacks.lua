@@ -2,27 +2,41 @@ return {
     "folke/snacks.nvim",
     ---@type snacks.Config
     opts = {
-        explorer = {
-            -- your explorer configuration comes here
-            -- or leave it empty to use the default settings
-            -- refer to the configuration section below
-        },
         picker = {
             sources = {
+                -- explorer picker configuration
                 explorer = {
-                    -- your explorer picker configuration comes here
-                    -- or leave it empty to use the default settings
                     win = {
                         list = {
                             keys = {
-                                ["o"] = "confirm", -- try remapping
+                                ["o"] = "confirm", -- remap
                             },
                         },
                     },
                 },
+                -- file picker configuration
                 files = {
                     -- search hidden files too
                     hidden = true,
+                    win = {
+                        input = {
+                            keys = {
+                                ["H"] = "toggle_hidden",
+                            },
+                        },
+                    },
+                },
+                -- grep picker configuration
+                grep = {
+                    -- search hidden files too
+                    hidden = true,
+                    win = {
+                        input = {
+                            keys = {
+                                ["H"] = "toggle_hidden",
+                            },
+                        },
+                    },
                 },
             },
         },
