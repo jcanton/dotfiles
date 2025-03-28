@@ -20,6 +20,10 @@ return {
                         },
                     },
                 },
+                files = {
+                    -- search hidden files too
+                    hidden = true,
+                },
             },
         },
     },
