@@ -45,7 +45,7 @@ prompt_git() {
         fi
     fi
 
-    #[ -n "${s}" ] && s="${s}"
+    [ -n "${s}" ] && s=" ${s}"
 
     echo -e "${1}${branchName}${2}${s}"
 }
@@ -87,7 +87,7 @@ PS1+="${style_separator}]${reset}"  # ]
 PS1+=" "                            # space
 PS1+="${style_directory}\W${reset}" # working directory (\W short, \w full path)
 #
-PS1+="\$(prompt_git \"${style_separator}  ${reset}${style_git_branch}\" \"${reset} ${style_git_status}\")" # Git repository details
+PS1+="\$(prompt_git \"${style_separator}  ${reset}${style_git_branch}\"\"${reset} ${style_git_status}\")" # Git repository details
 # PS1+="\n";
 PS1+="${style_separator} → ${reset}" # $
 export PS1
