@@ -1,5 +1,5 @@
 [general]
-import = ["~/projects/alacritty-theme/themes/catppuccin_frappe.toml"]
+import = ["~/projects/alacritty-theme/themes/dayfox.toml"]
 
 [font]
 size = 10.0
