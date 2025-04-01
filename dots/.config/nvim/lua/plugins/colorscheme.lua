@@ -14,11 +14,18 @@ return {
         },
     },
 
+    -- add nightfox
+    { "EdenEast/nightfox.nvim" },
+
+    -- add solarized
+    { "shaunsingh/solarized.nvim" },
+    -- { "ishan9299/nvim-solarized-lua" },
+
     -- Configure LazyVim to load gruvbox
     {
         "LazyVim/LazyVim",
         opts = {
-            colorscheme = "catppuccin",
+            colorscheme = "dayfox",
         },
     },
 }

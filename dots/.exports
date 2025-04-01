@@ -4,20 +4,28 @@
 export TERM='xterm-256color'
 
 # Colors
-# greys and catppuccin complementray triad
+# Greys and warnings
 export JC_COLOR00="233"
 export JC_COLOR01="238"
 export JC_COLOR02="246"
 export JC_COLOR03="255"
+export JC_COLOR_OK="$JC_COLOR02"
+export JC_COLOR_WARN="220"
+export JC_COLOR_STRESS="124"
+# Catppuccin complementray triad
 export JC_COLOR11="222"
 export JC_COLOR12="144"
 export JC_COLOR21="122"
 export JC_COLOR22="065"
 export JC_COLOR31="177"
 export JC_COLOR32="096"
-export JC_COLOR_OK="$JC_COLOR02"
-export JC_COLOR_WARN="220"
-export JC_COLOR_STRESS="124"
+# Dayfox complementray triad
+export JC_COLOR11="025"
+export JC_COLOR12="059"
+export JC_COLOR21="130"
+export JC_COLOR22="052"
+export JC_COLOR31="70"
+export JC_COLOR32="022"
 
 # Make vim/nvim the default editor.
 export EDITOR='nvim'

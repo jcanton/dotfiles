@@ -1,7 +1,7 @@
 # https://github.com/TwiggieSmallz/Default-Alacritty-TOML-Config/blob/main/alacritty.toml
 
 [general]
-import = ["~/projects/alacritty-theme/themes/catppuccin_frappe.toml"]
+import = ["~/projects/alacritty-theme/themes/dayfox.toml"]
 
 [font]
 size = 13.0
