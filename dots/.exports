@@ -12,20 +12,20 @@ export JC_COLOR03="255"
 export JC_COLOR_OK="$JC_COLOR02"
 export JC_COLOR_WARN="220"
 export JC_COLOR_STRESS="124"
-# Catppuccin complementray triad
-export JC_COLOR11="222"
-export JC_COLOR12="144"
-export JC_COLOR21="122"
-export JC_COLOR22="065"
-export JC_COLOR31="177"
-export JC_COLOR32="096"
+## Catppuccin complementray triad
+#export JC_COLOR11="222"
+#export JC_COLOR12="144"
+#export JC_COLOR21="122"
+#export JC_COLOR22="065"
+#export JC_COLOR31="177"
+#export JC_COLOR32="096"
 # Dayfox complementray triad
-export JC_COLOR11="025"
+export JC_COLOR11="136"
 export JC_COLOR12="059"
-export JC_COLOR21="130"
-export JC_COLOR22="052"
-export JC_COLOR31="70"
-export JC_COLOR32="022"
+export JC_COLOR21="036"
+export JC_COLOR22="022"
+export JC_COLOR31="091"
+export JC_COLOR32="053"
 
 # Make vim/nvim the default editor.
 export EDITOR='nvim'
@@ -34,13 +34,6 @@ export EDITOR='nvim'
 export PATH="$HOME/.local/bin:$PATH"
 export INCLUDE="$HOME/.local/include:$INCLUDE"
 export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
-
-# Enable persistent REPL history for `node`.
-export NODE_REPL_HISTORY=~/.node_history
-# Allow 32³ entries; the default is 1000.
-export NODE_REPL_HISTORY_SIZE='32768'
-# Use sloppy mode by default, matching web browsers.
-export NODE_REPL_MODE='sloppy'
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
 export PYTHONIOENCODING='UTF-8'
