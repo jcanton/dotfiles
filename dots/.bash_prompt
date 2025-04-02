@@ -47,7 +47,7 @@ prompt_git() {
 
     [ -n "${s}" ] && s=" ${s}"
 
-    echo -e "${1}${branchName}${2}${s}"
+    echo -e "${branchName}\n${s}"
 }
 
 # styles (can be combined)
@@ -63,11 +63,10 @@ prompt_git() {
 
 reset="\[\e[0m\]"
 style_separator="\[\\033[01;38;5;${JC_COLOR02}m\]"
-style_user="\[\\033[01;38;5;${JC_COLOR03}m\]"
+#style_user="\[\\033[01;38;5;${JC_COLOR03}m\]"
 style_host="\[\\033[01;38;5;${JC_COLOR11}m\]"
-style_directory="\[\\033[01;38;5;${JC_COLOR32}m\]"
-style_git_branch="\[\\033[01;38;5;${JC_COLOR21}m\]"
-style_git_branch="\[\\033[01;38;5;${JC_COLOR22}m\]"
+style_directory="\[\\033[01;38;5;${JC_COLOR22}m\]"
+style_git_branch="\[\\033[01;38;5;${JC_COLOR31}m\]"
 style_git_status="\[\\033[01;38;5;${JC_COLOR21}m\]"
 
 # Highlight the hostname when root or connected via SSH.
@@ -87,7 +86,17 @@ PS1+="${style_separator}]${reset}"  # ]
 PS1+=" "                            # space
 PS1+="${style_directory}\W${reset}" # working directory (\W short, \w full path)
 #
-PS1+="\$(prompt_git \"${style_separator} ${reset}${style_git_branch}\"\"${reset} ${style_git_status}\")" # Git repository details
+PS1+="\$(prompt_git | {
+    read -r branchName
+    read -r status
+    if [[ -n \"\$branchName\" ]]; then
+        output=\"${style_separator}  ${reset}${style_git_branch}\${branchName}${reset}\"
+        if [[ -n \"\$status\" ]]; then
+            output+=\" ${style_separator}[${reset}${style_git_status}\${status}${reset}${style_separator}]${reset}\"
+        fi
+        echo -e \"\$output\"
+    fi
+})"
 # PS1+="\n";
 PS1+="${style_separator} → ${reset}" # $
 export PS1

@@ -19,13 +19,20 @@ export JC_COLOR_STRESS="124"
 #export JC_COLOR22="065"
 #export JC_COLOR31="177"
 #export JC_COLOR32="096"
-# Dayfox complementray triad
-export JC_COLOR11="136"
-export JC_COLOR12="059"
-export JC_COLOR21="036"
-export JC_COLOR22="022"
-export JC_COLOR31="091"
-export JC_COLOR32="053"
+## Dayfox complementray triad
+#export JC_COLOR11="136"
+#export JC_COLOR12="059"
+#export JC_COLOR21="036"
+#export JC_COLOR22="022"
+#export JC_COLOR31="091"
+#export JC_COLOR32="053"
+# Tokyo Night-Day complementray triad
+export JC_COLOR11="178"
+export JC_COLOR12="101"
+export JC_COLOR21="042"
+export JC_COLOR22="059"
+export JC_COLOR31="128"
+export JC_COLOR32="059"
 
 # Make vim/nvim the default editor.
 export EDITOR='nvim'
