@@ -23,7 +23,7 @@ family = "BlexMono Nerd Font"
 style = "Italic"
 
 [window]
-decorations = "None"
+decorations = "Buttonless"
 # Window decorations.
 # Full: Borders and title bar.
 # None: Neither borders nor title bar.
