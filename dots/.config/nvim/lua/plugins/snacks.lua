@@ -41,4 +41,8 @@ return {
             },
         },
     },
+    keys = {
+        -- stylua: ignore
+        { "<leader><space>", function() Snacks.picker.git_files() end, desc = "Find Files (git-files)", },
+    },
 }
