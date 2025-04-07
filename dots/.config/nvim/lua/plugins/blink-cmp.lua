@@ -13,6 +13,11 @@ return {
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
+        completion = {
+            ghost_text = {
+                enabled = false, -- default: vim.g.ai_cmp,
+            },
+        },
         sources = {
             default = { "lsp", "path", "snippets", "buffer" },
             providers = {
@@ -23,8 +28,12 @@ return {
             },
         },
         keymap = {
-            preset = "super-tab",
-            ["<Right>"] = { "accept", "fallback" },
+            -- default:
+            preset = "enter",
+            ["<C-y>"] = { "select_and_accept" },
+            -- super tab:
+            -- preset = "super-tab",
+            -- ["<Right>"] = { "accept", "fallback" },
         },
     },
     opts_extend = { "sources.default" },

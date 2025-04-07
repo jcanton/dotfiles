@@ -3,6 +3,14 @@
 -- Add any additional keymaps here
 
 --------------------------------------------------------------------------------
+--- Windows --------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+-- Remap vertical split
+vim.keymap.del("n", "<leader>|")
+vim.keymap.set("n", "<leader><Bslash>", "<C-W>v", { desc = "Split Window Right", remap = true })
+
+--------------------------------------------------------------------------------
 --- DAP ------------------------------------------------------------------------
 --- https://lazyvim-ambitious-devs.phillips.codes/course/chapter-17/ -----------
 --- https://github.com/mfussenegger/nvim-dap/blob/a720d4966f758ab22e8ec28812b6df90a53e0f02/doc/dap.txt#L496
@@ -30,4 +38,5 @@ end)
 vim.keymap.set("n", "J", "mzJ`z")
 
 -- Use the void register for pasting with <leader>p
-vim.keymap.set("x", "<leader>p", '"_dP')
+-- This is currently used by Ring history
+-- vim.keymap.set("x", "<leader>p", '"_dP')
