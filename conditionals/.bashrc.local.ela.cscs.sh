@@ -3,8 +3,8 @@
 alias sc='cd $SCRATCH'
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
 if [ -n "${VSCODE_INVOKING}" ]; then
     #echo "invoked by vscode"
@@ -23,30 +23,33 @@ function wsq {
 export GT4PY_BUILD_CACHE_LIFETIME=PERSISTENT
 
 case $HOSTNAME in
-    balfrin*)
-        export GT4PY_BUILD_CACHE_DIR=$SCRATCH/gt4py_cache
-        # configure the user-environment (uenv) utility
-        # source /users/jcanton/.local/bin/activate-uenv
-        #if uenv status | grep -q 'no uenv loaded'; then
-        #    uenv start --view=icon-wcp:icon /scratch/mch/leclairm/uenvs/images/icon.v1.rc4.sqfs
-        #fi
-        ;;
-    nid*)
-        alias pyNode='source ~/.pythonComputeNode.env'
-        ;;
-    ela?)
-        echo "We're on ela"
-        # Though ela does not have access to /project anymore...
-        ;;
-    *)
-        echo "hostname not recognized in .bashrc.local"
-        ;;
-esac
-
-loadUenv() {
+balfrin*)
+    export GT4PY_BUILD_CACHE_DIR=$SCRATCH/gt4py_cache
     # configure the user-environment (uenv) utility
-    #source /users/jcanton/.local/bin/activate-uenv
-    uenv start --view=icon-wcp:icon /scratch/mch/leclairm/uenvs/images/icon.v1.rc4.sqfs
-    #uenv start /scratch/mch/leclairm/uenvs/images/icon.v1.rc4.sqfs
-    #uenv view icon-wcp:icon
-}
+    # source /users/jcanton/.local/bin/activate-uenv
+    #if uenv status | grep -q 'no uenv loaded'; then
+    #    uenv start --view=icon-wcp:icon /scratch/mch/leclairm/uenvs/images/icon.v1.rc4.sqfs
+    #fi
+    loadUenv() {
+        uenv start --view=icon-wcp:icon /scratch/mch/leclairm/uenvs/images/icon.v1.rc4.sqfs
+    }
+    ;;
+santis*)
+    export GT4PY_BUILD_CACHE_DIR=$SCRATCH/gt4py_cache
+    loadUenv() {
+        uenv start prgenv-gnu --view default
+    }
+    export PATH=$HOME/.local/$(uname -m)/bin:$PATH
+    unset -f uenv
+    ;;
+nid*)
+    alias pyNode='source ~/.pythonComputeNode.env'
+    ;;
+ela?)
+    echo "We're on ela"
+    # Though ela does not have access to /project anymore...
+    ;;
+*)
+    echo "hostname not recognized in .bashrc.local"
+    ;;
+esac
