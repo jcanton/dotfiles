@@ -2,7 +2,7 @@
 
 # Create a new directory and enter it
 function mkd() {
-    mkdir -p "$@" && cd "$_";
+    mkdir -p "$@" && cd "$_"
 }
 
 ## Change working directory to the top-most Finder window location
@@ -41,6 +41,9 @@ sshmount() {
     elif [ "$diskName" == "balfrin" ]; then
         command="sshfs balfrin:/scratch/mch/jcanton/ ${diskDir} ${dst_options}"
 
+    elif [ "$diskName" == "santis" ]; then
+        command="sshfs santis:/capstor/scratch/cscs/jcanton/ ${diskDir} ${dst_options}"
+
     elif [ "$diskName" == "squirrel" ]; then
         command="sshfs ${tunnel_options} squirrel:/home/l_jcanton ${diskDir} ${dst_options}"
 
@@ -66,59 +69,59 @@ sshmount() {
 
 # Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
 function targz() {
-    local tmpFile="${@%/}.tar";
-    tar -cvf "${tmpFile}" --exclude=".DS_Store" "${@}" || return 1;
+    local tmpFile="${@%/}.tar"
+    tar -cvf "${tmpFile}" --exclude=".DS_Store" "${@}" || return 1
 
     size=$(
-        stat -f"%z" "${tmpFile}" 2> /dev/null; # macOS `stat`
-        stat -c"%s" "${tmpFile}" 2> /dev/null;  # GNU `stat`
-    );
+        stat -f"%z" "${tmpFile}" 2>/dev/null # macOS `stat`
+        stat -c"%s" "${tmpFile}" 2>/dev/null # GNU `stat`
+    )
 
-    local cmd="";
-    if (( size < 52428800 )) && hash zopfli 2> /dev/null; then
+    local cmd=""
+    if ((size < 52428800)) && hash zopfli 2>/dev/null; then
         # the .tar file is smaller than 50 MB and Zopfli is available; use it
-        cmd="zopfli";
+        cmd="zopfli"
     else
-        if hash pigz 2> /dev/null; then
-            cmd="pigz";
+        if hash pigz 2>/dev/null; then
+            cmd="pigz"
         else
-            cmd="gzip";
-        fi;
-    fi;
+            cmd="gzip"
+        fi
+    fi
 
-    echo "Compressing .tar ($((size / 1000)) kB) using \`${cmd}\`…";
-    "${cmd}" -v "${tmpFile}" || return 1;
-    [ -f "${tmpFile}" ] && rm "${tmpFile}";
+    echo "Compressing .tar ($((size / 1000)) kB) using \`${cmd}\`…"
+    "${cmd}" -v "${tmpFile}" || return 1
+    [ -f "${tmpFile}" ] && rm "${tmpFile}"
 
     zippedSize=$(
-        stat -f"%z" "${tmpFile}.gz" 2> /dev/null; # macOS `stat`
-        stat -c"%s" "${tmpFile}.gz" 2> /dev/null; # GNU `stat`
-    );
+        stat -f"%z" "${tmpFile}.gz" 2>/dev/null # macOS `stat`
+        stat -c"%s" "${tmpFile}.gz" 2>/dev/null # GNU `stat`
+    )
 
-    echo "${tmpFile}.gz ($((zippedSize / 1000)) kB) created successfully.";
+    echo "${tmpFile}.gz ($((zippedSize / 1000)) kB) created successfully."
 }
 
 # Determine size of a file or total size of a directory
 function fs() {
-    if du -b /dev/null > /dev/null 2>&1; then
-        local arg=-sbh;
+    if du -b /dev/null >/dev/null 2>&1; then
+        local arg=-sbh
     else
-        local arg=-sh;
+        local arg=-sh
     fi
     if [[ -n "$@" ]]; then
-        du $arg -- "$@";
+        du $arg -- "$@"
     else
-        du $arg .[^.]* ./*;
-    fi;
+        du $arg .[^.]* ./*
+    fi
 }
 
 # Use Git’s colored diff when available
-hash git &>/dev/null;
+hash git &>/dev/null
 if [ $? -eq 0 ]; then
     function diff() {
-        git diff --no-index --color-words "$@";
+        git diff --no-index --color-words "$@"
     }
-fi;
+fi
 
 ## Create a data URL from a file
 #function dataurl() {
@@ -200,9 +203,9 @@ fi;
 if [ ! $(uname -s) = 'Darwin' ]; then
     if grep -q Microsoft /proc/version; then
         # Ubuntu on Windows using the Linux subsystem
-        alias open='explorer.exe';
+        alias open='explorer.exe'
     else
-        alias open='xdg-open';
+        alias open='xdg-open'
     fi
 fi
 
@@ -210,10 +213,10 @@ fi
 # location
 function o() {
     if [ $# -eq 0 ]; then
-        open .;
+        open .
     else
-        open "$@";
-    fi;
+        open "$@"
+    fi
 }
 
 # `tre` is a shorthand for `tree` with hidden files and color enabled, ignoring
@@ -221,5 +224,5 @@ function o() {
 # `less` with options to preserve color and line numbers, unless the output is
 # small enough for one screen.
 function tre() {
-    tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX;
+    tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX
 }
