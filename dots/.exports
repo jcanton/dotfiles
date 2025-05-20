@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 # TERM
-# export TERM='xterm-256color'
-# set this in your terminal
+export TERM='xterm-256color'
 
 # Colors
 # Greys and warnings
