@@ -39,11 +39,8 @@ santis*)
     loadUenv() {
         uenv start prgenv-gnu --view default
     }
-    export PATH=$HOME/.local/$(uname -m)/bin:$PATH
-    unset -f uenv
-    ;;
-nid*)
-    alias pyNode='source ~/.pythonComputeNode.env'
+    #export PATH=$HOME/.local/$(uname -m)/bin:$PATH
+    #unset -f uenv
     ;;
 ela?)
     echo "We're on ela"
