@@ -33,3 +33,6 @@ decorations = "Buttonless"
 # Transparent (macOS only): Title bar, transparent background and title bar buttons.
 # Buttonless (macOS only): Title bar, transparent background and no title bar buttons.
 # Default: "Full"
+
+[keyboard]
+bindings = [{ key = "V", mods = "Control | Shift", action = "ToggleViMode" }]
