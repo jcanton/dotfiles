@@ -8,7 +8,7 @@ export CLICOLOR=1
 
 # gt4py
 export GT4PY_BUILD_CACHE_LIFETIME=PERSISTENT
-export GT4PY_BUILD_CACHE_DIR=/home/jcanton/projects/
+export GT4PY_BUILD_CACHE_DIR=/Users/jcanton/projects/
 
 # nvm
 export NVM_DIR="$HOME/.nvm"
