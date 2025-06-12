@@ -73,7 +73,7 @@ style_git_status="\[\\033[01;38;5;${JC_COLOR21}m\]"
 if [[ "${USER}" == "root" ]]; then
     style_host="\[\\033[01;04;38;5;${JC_COLOR_STRESS}m\]"
 elif [[ "${SSH_TTY}" ]]; then
-    style_host="\[\\033[01;04;38;5;${JC_COLOR11}m\]"
+    style_host="\[\\033[01;04;38;5;${JC_COLOR31}m\]"
 fi
 
 # Set the terminal title and prompt.
