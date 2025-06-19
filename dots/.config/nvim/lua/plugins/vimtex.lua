@@ -7,6 +7,6 @@ return {
     end,
     keys = {
         { "<localLeader>l", "", desc = "+vimtex", ft = "tex" },
-        { "<localLeader>ll", "<cmd>VimtexCompileSS<cr>", desc = "vimtex-compileSS", ft = "tex" },
+        { "<localLeader>ll", "<ESC>:w<CR><cmd>VimtexCompileSS<cr>", desc = "vimtex-compileSS", ft = "tex" },
     },
 }
