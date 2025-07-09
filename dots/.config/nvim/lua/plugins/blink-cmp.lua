@@ -1,17 +1,6 @@
 return {
     "saghen/blink.cmp",
-    -- optional: provides snippets for the snippet source
-    dependencies = { "rafamadriz/friendly-snippets" },
 
-    -- use a release tag to download pre-built binaries
-    version = "*",
-    -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-    -- build = 'cargo build --release',
-    -- If you use nix, you can build from source using latest nightly rust with:
-    -- build = 'nix run .#build-plugin',
-
-    ---@module 'blink.cmp'
-    ---@type blink.cmp.Config
     opts = function(_, opts)
         vim.b.completion = true
 
@@ -25,33 +14,39 @@ return {
             end,
         }):map("<leader>uk")
 
-        return {
-            completion = {
-                ghost_text = {
-                    enabled = false, -- default: vim.g.ai_cmp,
-                },
-            },
-            sources = {
-                default = { "lsp", "path", "snippets", "buffer" },
-                providers = {
-                    buffer = {
-                        min_keyword_length = 8,
-                        max_items = 5,
-                    },
-                },
-            },
-            keymap = {
-                -- default:
-                preset = "enter",
-                ["<C-y>"] = { "select_and_accept" },
-                -- super tab:
-                -- preset = "super-tab",
-                -- ["<Right>"] = { "accept", "fallback" },
-            },
-            enabled = function()
-                return vim.b.completion ~= false
-            end,
+        opts.enabled = function()
+            return vim.b.completion ~= false
+        end
+
+        opts.completion = opts.completion or {}
+        opts.completion.ghost_text = {
+            enabled = false, -- default: vim.g.ai_cmp,
         }
+        opts.completion.list = opts.completion.list or {}
+        opts.completion.list.selection = {
+            -- preselect = false, -- Do not preselect
+            auto_insert = false, -- Do not auto insert
+        }
+
+        opts.sources = opts.sources or {}
+        opts.sources.providers = opts.sources.providers or {}
+        opts.sources.providers.buffer = opts.sources.providers.buffer or {}
+        opts.sources.providers.buffer = {
+            min_keyword_length = 8,
+            max_items = 5,
+        }
+
+        opts.sources.keymap = opts.sources.keymap or {}
+        opts.keymap = {
+            -- default:
+            preset = "enter",
+            ["<C-y>"] = { "select_and_accept" },
+            -- super tab:
+            -- preset = "super-tab",
+            -- ["<Right>"] = { "accept", "fallback" },
+        }
+
+        return opts
     end,
     opts_extend = { "sources.default" },
 }
