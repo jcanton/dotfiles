@@ -37,7 +37,7 @@ return {
         }
 
         opts.sources.keymap = opts.sources.keymap or {}
-        opts.keymap = {
+        opts.sources.keymap = {
             -- default:
             preset = "enter",
             ["<C-y>"] = { "select_and_accept" },
