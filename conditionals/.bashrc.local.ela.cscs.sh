@@ -35,6 +35,7 @@ balfrin*)
     }
     ;;
 santis*)
+    export VIMRUNTIME=/users/jcanton/.local/repo/neovim/runtime
     export GT4PY_BUILD_CACHE_DIR=$SCRATCH/gt4py_cache
     loadUenv() {
         uenv start prgenv-gnu --view default
