@@ -36,16 +36,6 @@ return {
             max_items = 5,
         }
 
-        opts.sources.keymap = opts.sources.keymap or {}
-        opts.sources.keymap = {
-            -- default:
-            preset = "enter",
-            ["<C-y>"] = { "select_and_accept" },
-            -- super tab:
-            -- preset = "super-tab",
-            -- ["<Right>"] = { "accept", "fallback" },
-        }
-
         return opts
     end,
     opts_extend = { "sources.default" },

@@ -1,27 +1,27 @@
+local util = require("lspconfig.util")
+
 return {
-    "neovim/nvim-lspconfig",
-    opts = {
-        servers = {
-            ruff = {
-                init_options = {
-                    settings = {
-                        lint = {
-                            enable = false,
-                        },
-                    },
-                },
+  "neovim/nvim-lspconfig",
+  opts = {
+    servers = {
+      ruff = {
+        root_dir = function(fname)
+          return util.find_git_ancestor(fname)
+        end,
+        init_options = {
+          settings = {
+            lint = {
+              enable = true,
             },
-            pyright = {
-                before_init = function(_, config)
-                    -- look for local venv and use that if found
-                    local venv_path = vim.fn.getcwd() .. "/.venv/bin/python"
-                    if vim.fn.filereadable(venv_path) == 1 then
-                        config.settings.python.pythonPath = venv_path
-                    else
-                        config.settings.python.pythonPath = vim.fn.exepath("python") -- fallback to system python
-                    end
-                end,
-            },
+          },
         },
+      },
+      pyright = {
+        root_dir = function(fname)
+          return util.find_git_ancestor(fname)
+        end,
+      },
     },
+  },
 }
+
