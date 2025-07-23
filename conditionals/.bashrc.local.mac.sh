@@ -2,6 +2,8 @@
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
+export CLUSTER_NAME="mac"
+
 # Base16 Shell
 export CLICOLOR=1
 # source $HOME/projects/tinted-shell/scripts/base16-tokyo-night-terminal-storm.sh
