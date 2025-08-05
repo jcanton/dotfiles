@@ -1,5 +1,9 @@
 alias sq='squeue -u jcanton -o "%.8i %.8u %.7a %.9P %.30j %.8T %.13S %.10M %.10L %.6D %.5C %.11r %E"'
 alias sc='cd $SCRATCH'
+alias l="ls -F"
+alias la="ls -lFh"
+alias ll="ls -lAFh"
+alias lsd="ls -lF | grep --color=never '^d'"
 
 # # manual uenv
 # export PATH=$HOME/.local/$(uname -m)/bin:$PATH
