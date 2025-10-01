@@ -8,6 +8,10 @@ vim.g.snacks_animate = false
 -- disable relative line numbers
 vim.opt.relativenumber = false
 
+-- set these here
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4.
+
 -- -- Try to fix annoying osc52 clipboard hang with ssh sessions
 -- -- https://github.com/folke/which-key.nvim/issues/584
 -- if vim.env.SSH_TTY then
