@@ -45,6 +45,9 @@ else
     alias du='du -h --max-depth=1'
 fi
 
+# ssh
+alias ssh="ssh -Y"
+
 # git
 alias g="git"
 
