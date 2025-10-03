@@ -15,7 +15,7 @@ if [ -n "${VSCODE_INVOKING}" ]; then
 fi
 
 alias sq='squeue -u jcanton -o "%.8i %.8u %.7a %.9P %.30j %.8T %.13S %.10M %.10L %.6D %.5C %.11r %E"'
-alias sql='squeue -u jcanton -o "%.8i %.8u %.7a %.9P %.50j %.8T %.13S %.10M %.10L %.6D %.5C %.11r %E"'
+alias sql='squeue -u jcanton -o "%.8i %.8u %.7a %.9P %.60j %.8T %.13S %.10M %.10L %.6D %.5C %.11r %E"'
 function wsq {
     watch -n 1 "squeue -u jcanton -o '%.8i %.8u %.7a %.9P %.30j %.8T %.13S %.10M %.10L %.6D %.5C %.11r %E'"
 }
