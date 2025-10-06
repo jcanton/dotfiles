@@ -12,6 +12,30 @@ vim.opt.relativenumber = false
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4.
 
+-- custom root_marker order for pyright and ruff (thank you icon4py)
+vim.lsp.config("pyright", {
+    root_markers = {
+        "pyrightconfig.json",
+        ".git",
+        "pyproject.toml",
+        "setup.py",
+        "setup.cfg",
+        "requirements.txt",
+        "Pipfile",
+    },
+})
+vim.lsp.config("ruff", {
+    root_markers = {
+        "pyrightconfig.json",
+        ".git",
+        "pyproject.toml",
+        "setup.py",
+        "setup.cfg",
+        "requirements.txt",
+        "Pipfile",
+    },
+})
+
 -- -- Try to fix annoying osc52 clipboard hang with ssh sessions
 -- -- https://github.com/folke/which-key.nvim/issues/584
 -- if vim.env.SSH_TTY then
