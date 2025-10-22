@@ -1,4 +1,7 @@
-#return 0
+# Skip for non-interactive or SLURM jobs
+[[ $- != *i* ]] && return
+[[ -n "$SLURM_JOB_ID" ]] && return
+
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
