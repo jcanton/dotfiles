@@ -18,8 +18,7 @@ loadUenv() {
     uenv start --view default icon/25.2:v3
 }
 
-export PYTHONOPTIMIZE=2
-export GT4PY_UNSTRUCTURED_HORIZONTAL_HAS_UNIT_STRIDE=1
-export GT4PY_BUILD_CACHE_LIFETIME=persistent
-export GT4PY_BUILD_CACHE_DIR=/capstor/scratch/cscs/jcanton/gt4py_cache/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/user-environment/linux-sles15-neoverse_v2/gcc-13.2.0/nvhpc-25.1-tsfur7lqj6njogdqafhpmj5dqltish7t/Linux_aarch64/25.1/compilers/lib
+#export PYTHONOPTIMIZE=2
+#export GT4PY_UNSTRUCTURED_HORIZONTAL_HAS_UNIT_STRIDE=1
+#export GT4PY_BUILD_CACHE_LIFETIME=persistent
+#export GT4PY_BUILD_CACHE_DIR=/capstor/scratch/cscs/jcanton/gt4py_cache/
