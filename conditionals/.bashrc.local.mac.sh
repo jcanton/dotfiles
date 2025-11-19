@@ -29,3 +29,6 @@ if [ -d "/opt/homebrew" ]; then
 else
     export PATH="/usr/local/opt/openjdk/bin:$PATH"
 fi
+
+# shell integrations for iterm2
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
