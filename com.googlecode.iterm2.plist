@@ -1481,14 +1481,16 @@
 				<key>Alpha Component</key>
 				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.93333333730697632</real>
+				<real>0.39215689897537231</real>
 				<key>Color Space</key>
-				<string>sRGB</string>
+				<string>P3</string>
 				<key>Green Component</key>
-				<real>0.93333333730697632</real>
+				<real>0.39215689897537231</real>
 				<key>Red Component</key>
-				<real>0.93333333730697632</real>
+				<real>0.39215689897537231</real>
 			</dict>
+			<key>Brighten Bold Text (Light)</key>
+			<true/>
 			<key>Character Encoding</key>
 			<integer>4</integer>
 			<key>Close Sessions On End</key>
@@ -1871,6 +1873,8 @@
 			<true/>
 			<key>Use Bright Bold</key>
 			<true/>
+			<key>Use Bright Bold (Light)</key>
+			<true/>
 			<key>Use Italic Font</key>
 			<true/>
 			<key>Use Non-ASCII Font</key>
@@ -1932,6 +1936,8 @@
 	<integer>6</integer>
 	<key>TabViewType</key>
 	<integer>1</integer>
+	<key>TimeBetweenTips</key>
+	<real>604800</real>
 	<key>TmuxSyncClipboard</key>
 	<false/>
 	<key>UseBorder</key>
@@ -1942,5 +1948,9 @@
 	<string>qrsAAAGXnXBrwGxMO6s=</string>
 	<key>findMode_iTerm</key>
 	<integer>0</integer>
+	<key>kCPKSelectionViewPreferredModeKey</key>
+	<integer>0</integer>
+	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
+	<false/>
 </dict>
 </plist>
