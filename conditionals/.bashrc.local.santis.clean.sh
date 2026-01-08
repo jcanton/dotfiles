@@ -18,6 +18,18 @@ loadUenv() {
     uenv start --view default icon/25.2:v3
 }
 
+# activate / deactivate virtual environment
+function va() {
+    if [ -n "$1" ]; then
+        source "./$1/.venv/bin/activate"
+    else
+        source .venv/bin/activate
+    fi
+}
+function vd() {
+    deactivate
+}
+
 #export PYTHONOPTIMIZE=2
 #export GT4PY_UNSTRUCTURED_HORIZONTAL_HAS_UNIT_STRIDE=1
 #export GT4PY_BUILD_CACHE_LIFETIME=persistent

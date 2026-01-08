@@ -13,8 +13,9 @@ if [ -n "${VSCODE_INVOKING}" ]; then
     # set colors
     export CLICOLOR=1
     # Base16 Shell
-    source $HOME/projects/tinted-shell/scripts/base16-solarized-light.sh
+    #source $HOME/projects/tinted-shell/scripts/base16-solarized-light.sh
 fi
+
 
 alias sq='squeue -u jcanton -o "%.8i %.8u %.7a %.9P %.30j %.8T %.13S %.10M %.10L %.6D %.5C %.11r %E"'
 alias sql='squeue -u jcanton -o "%.8i %.8u %.7a %.9P %.70j %.8T %.13S %.10M %.10L %.6D %.5C %.11r %E"'
@@ -39,11 +40,6 @@ balfrin*)
 santis*)
     export VIMRUNTIME=/users/jcanton/.local/repo/neovim/runtime
     export GT4PY_BUILD_CACHE_DIR=$SCRATCH/gt4py_cache
-    loadUenv() {
-        uenv start prgenv-gnu --view default
-    }
-    #export PATH=$HOME/.local/$(uname -m)/bin:$PATH
-    #unset -f uenv
     ;;
 ela?)
     echo "We're on ela"
