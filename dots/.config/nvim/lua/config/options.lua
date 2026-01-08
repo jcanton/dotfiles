@@ -11,6 +11,7 @@ vim.opt.relativenumber = false
 -- set these here
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4.
+vim.opt.scrolloff = 0
 
 -- custom root_marker order for pyright and ruff (thank you icon4py)
 vim.lsp.config("pyright", {
