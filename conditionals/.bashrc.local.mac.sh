@@ -12,6 +12,10 @@ export CLICOLOR=1
 export GT4PY_BUILD_CACHE_LIFETIME=PERSISTENT
 export GT4PY_BUILD_CACHE_DIR=/Users/jcanton/projects/
 
+# # gcc from homebrew for icon4py
+# export CC=gcc-15
+# export CXX=g++-15
+
 # nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
