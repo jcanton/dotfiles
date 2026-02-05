@@ -4,6 +4,9 @@
 
 [alias]
 
+    # List aliases.
+    aliases = config --get-regexp alias
+
     # View abbreviated SHA, description, and history graph of the latest 20 commits.
     l = log --pretty=oneline -n 20 --graph --abbrev-commit
 
@@ -40,13 +43,21 @@
     # Switch to a branch, creating it if necessary.
     go = "!f() { git checkout -b \"$1\" 2> /dev/null || git checkout \"$1\"; }; f"
 
+    # checkout PR from forked repo a-la `msimberg:diffusion-mask-fix-torus`
+    prgo = "!f() { \
+        spec=\"$1\"; \
+        owner=\"${spec%%:*}\"; branch=\"${spec#*:}\"; remote=\"fork-${owner}\"; \
+        [ -z \"$owner\" ] || [ -z \"$branch\" ] || [ \"$owner\" = \"$branch\" ] && { echo \"Usage: git prgo owner:branch\"; exit 1; }; \
+        origin_url=$(git remote get-url origin 2>/dev/null) || { echo \"No origin remote\"; exit 1; }; \
+        repo=$(basename -s .git \"$origin_url\"); \
+        git remote get-url \"$remote\" >/dev/null 2>&1 || git remote add \"$remote\" \"https://github.com/${owner}/${repo}.git\"; \
+        git fetch \"$remote\" && git checkout -b \"$branch\" \"${remote}/${branch}\"; \
+    }; f"
+
     # Show verbose output about tags, branches or remotes
     tags = tag -l
     branches = branch --all
     remotes = remote --verbose
-
-    # List aliases.
-    aliases = config --get-regexp alias
 
     # Amend the currently staged files to the latest commit.
     amend = commit --amend --reuse-message=HEAD
