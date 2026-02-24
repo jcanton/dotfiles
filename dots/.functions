@@ -10,7 +10,7 @@ function va() {
     if [ -n "$1" ]; then
         source "./$1/.venv/bin/activate"
     else
-    source .venv/bin/activate
+        source .venv/bin/activate
     fi
 }
 function vd() {
@@ -134,6 +134,112 @@ if [ $? -eq 0 ]; then
         git diff --no-index --color-words "$@"
     }
 fi
+
+# -----------------------------------------------------------------------------
+# mpytest
+#
+# Run MPI pytest debugging with one tmux pane per rank.
+#
+# Usage:
+#   mpytest <np> [pytest args...]
+#
+# Examples:
+#   mpytest 4
+#   mpytest 8 model/common/test_file.py
+#
+# Automatically adds:
+#   pytest -n 0 --pdb --with-mpi -vs
+#
+# Features:
+#   - One tmux pane per MPI rank
+#   - Interactive pdb/breakpoint() works per rank
+#   - Pane titles show rank numbers
+#   - Rank banner printed in each pane
+#
+# Tips:
+#   Enable synchronized panes manually if desired:
+#       \leader :setw synchronize-panes on
+# -----------------------------------------------------------------------------
+mpytest() {
+
+    if [ -z "$1" ]; then
+        echo "Usage: mpytest <np> [pytest args...]"
+        return 1
+    fi
+
+    local NP="$1"
+    shift
+
+    local PYTEST_CMD="pytest -n 0 --pdb --with-mpi -vs $*"
+
+    local RANK_ENV='${OMPI_COMM_WORLD_RANK:-${PMI_RANK:-${PMIX_RANK:-0}}}'
+
+    local WINDOW_TARGET
+    local ATTACH=0
+
+    # --------------------------------------------------
+    # Create window/session
+    # --------------------------------------------------
+    if [ -z "$TMUX" ]; then
+        WINDOW_TARGET="mpytest"
+        tmux new-session -d -s "$WINDOW_TARGET"
+        ATTACH=1
+    else
+        WINDOW_TARGET="$(tmux display-message -p '#S'):mpytest"
+        tmux new-window -n mpytest
+    fi
+
+    # --------------------------------------------------
+    # Create panes and collect pane IDs
+    # --------------------------------------------------
+    local PANES=()
+
+    PANES+=("$(tmux display-message -p -t "$WINDOW_TARGET" '#{pane_id}')")
+
+    for ((i = 1; i < NP; i++)); do
+        tmux split-window -t "$WINDOW_TARGET"
+        tmux select-layout -t "$WINDOW_TARGET" tiled
+        PANES+=("$(tmux display-message -p -t "$WINDOW_TARGET" '#{pane_id}')")
+    done
+
+    # Safety: re-fetch pane IDs in sorted order
+    mapfile -t PANES < <(tmux list-panes -t "$WINDOW_TARGET" -F "#{pane_id}")
+    #PANES=($(tmux list-panes -t "$WINDOW_TARGET" -F "#{pane_id}"))
+
+    # --------------------------------------------------
+    # Set pane titles
+    # --------------------------------------------------
+    for ((i = 0; i < NP; i++)); do
+        tmux select-pane -t "${PANES[$i]}" -T "rank $i"
+    done
+
+    # --------------------------------------------------
+    # Export pane mapping for MPI children
+    # --------------------------------------------------
+    local PANE_MAP
+    PANE_MAP=$(printf "%s " "${PANES[@]}")
+
+    # --------------------------------------------------
+    # Launch MPI
+    # --------------------------------------------------
+    mpirun -np "$NP" bash -c "
+        PANES=($PANE_MAP)
+        RANK=$RANK_ENV
+        TARGET_PANE=\${PANES[\$RANK]}
+
+        tmux send-keys -t \$TARGET_PANE \
+        'echo \"===== MPI RANK \$RANK =====\"; sleep 0.1; $PYTEST_CMD' C-m
+    "
+
+    if [ "$ATTACH" -eq 1 ]; then
+        tmux attach -t "$WINDOW_TARGET"
+    fi
+
+    echo
+    echo "💡 Tip: Broadcast commands to all panes:"
+    echo "   Ctrl+b :setw synchronize-panes on"
+    echo
+}
 
 ## Create a data URL from a file
 #function dataurl() {
