@@ -38,3 +38,18 @@ set convert-meta off
 
 # Use Alt/Meta + Delete to delete the preceding word
 "\e[3;3~": kill-word
+
+# bash on MacOS seems to need these
+# Ctrl + Arrow
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+
+# Alt + Arrow (Option on macOS)
+"\e[1;3C": forward-word
+"\e[1;3D": backward-word
+
+# Some terminals send these variants
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e[3C": forward-word
+"\e[3D": backward-word
