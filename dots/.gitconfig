@@ -160,7 +160,14 @@
 
     # Detect copies as well as renames.
     renames = copies
-    tool = vimdiff
+    tool = nvimdiff
+
+[difftool]
+    prompt = true
+
+[difftool "nvimdiff"]
+    prompt = false
+    cmd = nvim -d  $REMOTE $LOCAL
 
 [diff "bin"]
 
@@ -176,10 +183,10 @@
 
     # Include summaries of merged commits in newly created merge commit messages
     log = true
-    tool = nvim
+    tool = nvimmerge
     #conflictstyle = diff3
 
-[mergetool "nvim"]
+[mergetool "nvimmerge"]
     cmd = nvim -d $LOCAL $BASE $REMOTE $MERGED \
           -c '$wincmd w' -c 'wincmd J'
 
