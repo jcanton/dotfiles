@@ -39,7 +39,7 @@ export EDITOR='nvim'
 
 # Add to the `$PATH`
 export PATH="$HOME/.local/bin:$PATH"
-export INCLUDE="$HOME/.local/include:$INCLUDE"
+#export INCLUDE="$HOME/.local/include" # This doesn't even exist on macOS
 export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.

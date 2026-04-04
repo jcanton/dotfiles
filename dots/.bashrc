@@ -10,6 +10,9 @@ for file in ~/.{path,exports,aliases,functions,bash_prompt,extra}; do
 done
 unset file
 
+# Maybe sets **
+shopt -s extglob
+
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob
 
