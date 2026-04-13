@@ -16,8 +16,8 @@ return {
         },
         panel = { enabled = false },
         filetypes = {
-            -- markdown = true, default
             -- help = true, default
+            markdown = false,
             tex = false,
         },
     },
