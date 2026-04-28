@@ -50,7 +50,7 @@
         [ -z \"$owner\" ] || [ -z \"$branch\" ] || [ \"$owner\" = \"$branch\" ] && { echo \"Usage: git prgo owner:branch\"; exit 1; }; \
         origin_url=$(git remote get-url origin 2>/dev/null) || { echo \"No origin remote\"; exit 1; }; \
         repo=$(basename -s .git \"$origin_url\"); \
-        git remote get-url \"$remote\" >/dev/null 2>&1 || git remote add \"$remote\" \"https://github.com/${owner}/${repo}.git\"; \
+        git remote get-url \"$remote\" >/dev/null 2>&1 || git remote add \"$remote\" \"git@github.com:${owner}/${repo}.git\"; \
         git fetch \"$remote\" && git checkout -b \"$branch\" \"${remote}/${branch}\"; \
     }; f"
 
