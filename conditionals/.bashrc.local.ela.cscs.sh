@@ -1,6 +1,9 @@
 # CSCS specific settings:
 
 alias sc='cd $SCRATCH'
+export PROJECT="/capstor/store/cscs/userlab/cwd01/jcanton"
+alias pr='cd $PROJECT'
+
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
