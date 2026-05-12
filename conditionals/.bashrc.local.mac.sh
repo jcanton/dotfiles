@@ -36,3 +36,6 @@ fi
 
 # shell integrations for iterm2
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+
+# Disable telemetry for oh-my-openagent
+export OMO_SEND_ANONYMOUS_TELEMETRY=0
