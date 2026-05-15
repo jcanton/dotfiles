@@ -53,6 +53,7 @@ function buildIcon4py() {
     export MPICH_CXX=$(which g++)
     export MPICH_CC=$(which gcc)
     export MPICH_GPU_SUPPORT_ENABLED=1
+    uv sync --no-binary-package mpi4py --extra all --extra distributed --extra cuda12 --python $(which python) --refresh
 }
 export GT4PY_BUILD_CACHE_LIFETIME=persistent
 export GT4PY_UNSTRUCTURED_HORIZONTAL_HAS_UNIT_STRIDE=1
@@ -61,10 +62,3 @@ export LD_LIBRARY_PATH=/user-environment/linux-sles15-neoverse_v2/gcc-13.2.0/nvh
 
 export ICON4PY_ENABLE_TESTDATA_DOWNLOAD=false
 #uv sync --no-binary-package mpi4py --extra all --extra distributed --extra cuda12 --python $(which python) --refresh
-
-
-# building icon4py
-# GHEX_USE_GPU=ON GHEX_GPU_TYPE=NVIDIA GHEX_GPU_ARCH=90
-# GHEX_TRANSPORT_BACKEND=MPI MPICH_CXX=$(which g++) MPICH_CC=$(which gcc) uv
-# sync --no-binary-package mpi4py --extra all --extra distributed --extra
-# cuda12 --python $(which python) --no-cache
