@@ -9,6 +9,7 @@
 -- Remap vertical split
 vim.keymap.del("n", "<leader>|")
 vim.keymap.set("n", "<leader><Bslash>", "<C-W>v", { desc = "Split Window Right", remap = true })
+vim.keymap.set("n", "<leader>9", "<C-W>s", { desc = "Split Window Below", remap = true })
 
 --------------------------------------------------------------------------------
 --- DAP ------------------------------------------------------------------------
