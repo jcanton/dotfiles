@@ -1,0 +1,30 @@
+customCommands:
+  # Worktree for a local branch (select a branch and press W)
+  - key: "W"
+    context: "localBranches"
+    description: "Worktree for branch"
+    command: "git worktree add .worktrees/{{ .SelectedLocalBranch.Name }} {{ .SelectedLocalBranch.Name }}"
+    loadingText: "Creating worktree..."
+
+  # Worktree from a remote branch (press W anywhere, type the branch name)
+  - key: "W"
+    context: "global"
+    description: "Worktree from remote branch"
+    prompts:
+      - type: "input"
+        title: "Branch name?"
+        key: "Name"
+        initialValue: ""
+    command: "git worktree add -b {{ .Form.Name }} .worktrees/{{ .Form.Name }} origin/{{ .Form.Name }}"
+    loadingText: "Creating worktree from remote..."
+
+  # Force remove a worktree
+  - key: "D"
+    context: "worktrees"
+    description: "Force remove worktree"
+    prompts:
+      - type: "confirm"
+        title: "Force Remove Worktree"
+        body: "Are you sure you want to remove this worktree?"
+    command: "git worktree remove -f {{ .SelectedWorktree.Path | quote }}"
+    loadingText: "Removing worktree..."

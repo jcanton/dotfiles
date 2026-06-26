@@ -6,6 +6,7 @@ return {
                 { pattern = "opencode", icon = "󱙺", color = "cyan" },
                 { pattern = "slime", icon = "", color = "red" },
                 { pattern = "undotree", icon = "", color = "red" },
+                { pattern = "worktree", icon = "", color = "orange" },
             },
         }
     end,
