@@ -41,14 +41,36 @@ set_autoformat({ "python" }, false)
 --------------------------------------------------------------------------------
 
 -- fortls handles textDocument/documentHighlight but doesn't advertise the
--- capability. Snacks.words checks supports_method() and skips it. Patch it.
+-- capability, so Snacks.words checks supports_method() and skips it.
+--
+-- It also answers documentHighlight with its *references* handler, which returns
+-- project-wide Location[] objects ({uri, range}) instead of the bare
+-- DocumentHighlight[] ({range, kind}) the protocol expects. Neovim's default
+-- handler assumes every range belongs to the current buffer, so matches from
+-- *other* files get painted onto this buffer at the same line/column -> stray
+-- characters and whitespace light up. Filter results down to the requested
+-- document before the stock handler renders them.
 vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("lsp_fortls_highlight", { clear = true }),
-    desc = "Enable document highlight for fortls (missing capability)",
+    desc = "Enable + fix document highlight for fortls",
     callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
-        if client and client.name == "fortls" then
-            client.server_capabilities.documentHighlightProvider = true
+        if not (client and client.name == "fortls") then
+            return
+        end
+
+        client.server_capabilities.documentHighlightProvider = true
+
+        local default = vim.lsp.handlers["textDocument/documentHighlight"]
+        client.handlers["textDocument/documentHighlight"] = function(err, result, ctx, config)
+            if result and ctx.params and ctx.params.textDocument then
+                local want = vim.uri_to_fname(ctx.params.textDocument.uri)
+                result = vim.tbl_filter(function(item)
+                    -- keep bare DocumentHighlight (no uri) + current-file matches
+                    return item.uri == nil or vim.uri_to_fname(item.uri) == want
+                end, result)
+            end
+            return default(err, result, ctx, config)
         end
     end,
 })
