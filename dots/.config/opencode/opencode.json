@@ -1,7 +1,24 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "opencode-pty",
-    "opencode-model-router"
-  ]
+    "opencode-pty"
+  ],
+  "agent": {
+    "fast": {
+      "mode": "subagent",
+      "description": "Fast/cheap exploration: search, grep, read, lookup. Read-only.",
+      "prompt": "ROLE: Read-only exploration specialist. Search, grep, read, ls, lookup — never edit. Return findings concisely with file:line paths. Stop when you have enough — don't over-explore."
+    },
+    "medium": {
+      "mode": "subagent",
+      "description": "Implementation: write/edit code, refactor, tests, bug fixes.",
+      "prompt": "ROLE: Implementation specialist. Write/edit code, refactor, add tests, fix bugs. Match project patterns exactly. Run targeted tests for changed areas. Return a summary of changes made."
+    },
+    "heavy": {
+      "mode": "subagent",
+      "description": "Architecture/debug: complex debugging, security, perf, tradeoffs.",
+      "prompt": "ROLE: Senior architecture and debugging consultant. Analyze exhaustively. Provide reasoning, tradeoffs, and concrete recommendations. Write code only when asked. Return structured analysis."
+    }
+  },
+  "instructions": []
 }

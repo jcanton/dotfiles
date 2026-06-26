@@ -56,16 +56,10 @@ Configs live in `dots/.config/opencode/`:
 | `opencode.json` | `~/.config/opencode/opencode.json` (via bootstrap) |
 | `tui.json` | `~/.config/opencode/tui.json` (via bootstrap) |
 | `package.json` | `~/.config/opencode/package.json` (via bootstrap) |
-| `tiers.json` | `~/.config/opencode/node_modules/opencode-model-router/tiers.json` (manual) |
 
 `bun.lock` and `node_modules/` stay in `~/.config/opencode/` — not managed by dotfiles. After bootstrap, run:
 
 ```bash
-# Symlink tiers.json into the model-router plugin
-TARGET=~/.config/opencode/node_modules/opencode-model-router/tiers.json
-test -e "$TARGET" && rm "$TARGET"
-ln -s ~/projects/dotfiles/dots/.config/opencode/tiers.json "$TARGET"
-# Then re-install deps
 cd ~/.config/opencode && bun install
 ```
 
