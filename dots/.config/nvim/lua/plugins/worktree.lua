@@ -17,12 +17,21 @@ return {
       return vim.trim(result) == "git@github.com:C2SM/icon4py.git"
     end
 
-    local function link_testdata(path, name)
-      local target = path .. "/testdata"
-      if vim.fn.filetype(target) ~= "link" then
-        vim.notify("[worktree] link testdata for " .. name, vim.log.levels.INFO)
-        vim.fn.system({ "ln", "-s", "../../testdata/", target })
+    local function link_repo_root(path, name, item)
+      local target = path .. "/" .. item
+      if vim.fn.getftype(target) == "link" then
+        return
       end
+      vim.notify("[worktree] link " .. item .. " for " .. name, vim.log.levels.INFO)
+      vim.fn.system({ "ln", "-s", "../../" .. item, target })
+    end
+
+    local function link_worktree_assets(path, name)
+      if not path:match("/%.worktrees/") then
+        return
+      end
+      link_repo_root(path, name, "testdata")
+      link_repo_root(path, name, "pyrightconfig.json")
     end
 
     local function run_uv_sync(path, name)
@@ -45,7 +54,7 @@ return {
       end
       local name = vim.fn.fnamemodify(metadata.path, ":t")
       if is_icon4py_repo(metadata.path) then
-        link_testdata(metadata.path, name)
+        link_worktree_assets(metadata.path, name)
         vim.schedule(function()
           run_uv_sync(metadata.path, name)
         end)
