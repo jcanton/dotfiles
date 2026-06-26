@@ -37,6 +37,23 @@ set_autoformat({ "fortran" }, false)
 set_autoformat({ "python" }, false)
 
 --------------------------------------------------------------------------------
+--- LSP highlight fix for fortls -----------------------------------------------
+--------------------------------------------------------------------------------
+
+-- fortls handles textDocument/documentHighlight but doesn't advertise the
+-- capability. Snacks.words checks supports_method() and skips it. Patch it.
+vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("lsp_fortls_highlight", { clear = true }),
+    desc = "Enable document highlight for fortls (missing capability)",
+    callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client and client.name == "fortls" then
+            client.server_capabilities.documentHighlightProvider = true
+        end
+    end,
+})
+
+--------------------------------------------------------------------------------
 --- DAP ------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
