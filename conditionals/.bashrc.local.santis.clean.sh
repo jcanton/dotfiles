@@ -17,17 +17,10 @@ alias g="git"
 shopt -s extglob
 shopt -s globstar
 
-# # manual uenv
-# export PATH=$HOME/.local/$(uname -m)/bin:$PATH
-# unset -f uenv
-# loadUenv() {
-#     uenv start prgenv-gnu --view default
-# }
-
 # # ufficial uenv
-# uenv image pull icon/27.6:v1
+# uenv image pull icon/26.7:v1
 loadUenv() {
-    uenv start --view default icon/27.6:v1
+    uenv start --view default icon/26.7:v1
 }
 
 # activate / deactivate virtual environment
@@ -61,7 +54,6 @@ export GT4PY_UNSTRUCTURED_HORIZONTAL_HAS_UNIT_STRIDE=1
 export LD_LIBRARY_PATH=/user-environment/linux-sles15-neoverse_v2/gcc-13.2.0/nvhpc-25.1-tsfur7lqj6njogdqafhpmj5dqltish7t/Linux_aarch64/25.1/compilers/lib:$LD_LIBRARY_PATH
 
 export ICON4PY_ENABLE_TESTDATA_DOWNLOAD=false
-#uv sync --no-binary-package mpi4py --extra all --extra distributed --extra cuda12 --python $(which python) --refresh
 
 # >>> icon4py dev scripts >>>
 # The scripts/* shebang uses "uv run --isolated", which rebuilds a throwaway

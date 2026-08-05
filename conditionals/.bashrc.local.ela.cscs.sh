@@ -42,7 +42,7 @@ balfrin*)
     ;;
 santis*)
     export VIMRUNTIME=/users/jcanton/.local/repo/neovim/runtime
-    export GT4PY_BUILD_CACHE_DIR=$SCRATCH/gt4py_cache
+    #export GT4PY_BUILD_CACHE_DIR=$SCRATCH/gt4py_cache
     ;;
 ela?)
     echo "We're on ela"
