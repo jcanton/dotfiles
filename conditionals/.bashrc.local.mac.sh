@@ -68,3 +68,25 @@ claude() {
   return $_car_exit
 }
 # <<< claude-auto-retry <<<
+
+# >>> icon4py dev scripts >>>
+# The scripts/* shebang uses "uv run --isolated", which rebuilds a throwaway
+# environment on every call (~4s). Invoking uv ourselves bypasses it (~0.3s).
+# See C2SM/icon4py#1419.
+_i4_run() {
+    local entry=$1; shift
+    local root venv
+    root=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "i4: not in a git repo" >&2; return 1; }
+    [ -f "$root/$entry" ] || { echo "i4: no $entry in $root" >&2; return 1; }
+    venv="$root/.venv/bin/python"
+    # Pin to the venv's own interpreter: without this uv follows .python-version and
+    # deletes/rebuilds a venv that was created with a different python.
+    if [ -x "$venv" ]; then
+        ( cd "$root" && UV_PYTHON="$venv" uv run -q --frozen --group scripts python3 "$entry" "$@" )
+    else
+        ( cd "$root" && uv run -q --frozen --group scripts python3 "$entry" "$@" )
+    fi
+}
+i4()  { _i4_run scripts/run  "$@"; }   # e.g. i4 inspect-savepoints savepoints -e exclaim_ape_aesPhys
+i4t() { _i4_run scripts/test "$@"; }
+# <<< icon4py dev scripts <<<
