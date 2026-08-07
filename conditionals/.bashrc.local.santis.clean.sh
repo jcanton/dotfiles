@@ -23,6 +23,22 @@ loadUenv() {
     uenv start --view default icon/26.7:v1
 }
 
+# GT4Py emits UTF-8 identifiers (e.g. z_ifvᐞ0). CMake takes the compiler from CXX,
+# else the first c++ on PATH, which here is an old /usr/bin/c++ that rejects them with
+# "stray '\341' in program". Point it at the uenv compiler instead.
+# NOTE: after changing this, delete .gt4py_cache -- GT4Py caches a prototype
+# compile_commands.json and replays the old compiler command verbatim.
+useUenvCompilers() {
+    local cxx
+    cxx=$(command -v g++) || return 0
+    case "$cxx" in
+        /usr/bin/*) return 0 ;;   # system compiler, too old: leave CXX unset
+    esac
+    export CXX="$cxx"
+    export CC="$(command -v gcc)"
+}
+useUenvCompilers
+
 # activate / deactivate virtual environment
 function va() {
     if [ -n "$1" ]; then
@@ -46,6 +62,7 @@ function buildIcon4py() {
     export MPICH_CXX=$(which g++)
     export MPICH_CC=$(which gcc)
     export MPICH_GPU_SUPPORT_ENABLED=1
+    useUenvCompilers
     uv sync --no-binary-package mpi4py --extra all --extra distributed --extra cuda12 --python $(which python) --refresh --group scripts
 }
 export GT4PY_BUILD_CACHE_LIFETIME=persistent
