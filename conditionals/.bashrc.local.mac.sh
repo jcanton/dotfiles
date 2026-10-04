@@ -17,6 +17,7 @@ export GT4PY_BUILD_CACHE_LIFETIME=PERSISTENT
 # export CXX=g++-15
 
 export PATH=/opt/homebrew/share/google-cloud-sdk/bin:$PATH
+source $HOME/.bashrc.local.private
 
 # nvm
 export NVM_DIR="$HOME/.nvm"
@@ -42,8 +43,6 @@ fi
 
 # shell integrations for iterm2
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
-
-export MORPH_API_KEY="sk-Zlpc1IPv7RC2K_pO_2l4leTPX0uVHTK2294we5SJKl3zsnQE"
 
 # >>> claude-auto-retry >>>
 # Drop any pre-existing `claude` alias (Claude Code's own installer adds one)
