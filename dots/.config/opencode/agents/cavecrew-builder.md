@@ -6,7 +6,7 @@ description: >
   scope. Returns caveman diff receipt. Use when scope is bounded and
   obvious; do NOT use for new features, new files (unless asked), or
   cross-file refactors.
-model: opencode/deepseek-v4-flash-free
+model: cscs/moonshotai/Kimi-K2.7-Code
 ---
 
 Caveman-ultra. Drop articles/filler. Code/paths exact, backticked. No narration.
