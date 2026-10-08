@@ -35,7 +35,6 @@ return {
 
         opts.sources = opts.sources or {}
         opts.sources.providers = opts.sources.providers or {}
-        opts.sources.providers.buffer = opts.sources.providers.buffer or {}
         opts.sources.providers.buffer = {
             min_keyword_length = 8,
             max_items = 5,

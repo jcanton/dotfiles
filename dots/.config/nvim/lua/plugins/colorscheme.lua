@@ -1,8 +1,10 @@
+-- Alternatives stay lazy: lazy.nvim loads them on `:colorscheme <name>`.
 return {
     -- add gruvbox
-    { "ellisonleao/gruvbox.nvim" },
+    { "ellisonleao/gruvbox.nvim", lazy = true },
 
     -- add catppuccin
+    -- Not lazy: nvim >= 0.12 ships its own `catppuccin`, which would shadow this one.
     {
         "catppuccin/nvim",
         name = "catppuccin",
@@ -15,10 +17,10 @@ return {
     },
 
     -- add nightfox
-    { "EdenEast/nightfox.nvim" },
+    { "EdenEast/nightfox.nvim", lazy = true },
 
     -- add solarized
-    { "shaunsingh/solarized.nvim" },
+    { "shaunsingh/solarized.nvim", lazy = true },
     -- { "ishan9299/nvim-solarized-lua" },
 
     -- Configure LazyVim to load gruvbox

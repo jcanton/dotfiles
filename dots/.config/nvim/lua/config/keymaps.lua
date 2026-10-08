@@ -12,6 +12,15 @@ vim.keymap.set("n", "<leader><Bslash>", "<C-W>v", { desc = "Split Window Right",
 vim.keymap.set("n", "<leader>9", "<C-W>s", { desc = "Split Window Below", remap = true })
 
 --------------------------------------------------------------------------------
+--- Undotree (built in since nvim 0.12) ----------------------------------------
+--------------------------------------------------------------------------------
+
+vim.keymap.set("n", "<leader>U", function()
+    vim.cmd.packadd("nvim.undotree")
+    vim.cmd.Undotree()
+end, { desc = "Toggle undotree" })
+
+--------------------------------------------------------------------------------
 --- DAP ------------------------------------------------------------------------
 --- https://lazyvim-ambitious-devs.phillips.codes/course/chapter-17/ -----------
 --- https://github.com/mfussenegger/nvim-dap/blob/a720d4966f758ab22e8ec28812b6df90a53e0f02/doc/dap.txt#L496
