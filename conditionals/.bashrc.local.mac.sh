@@ -44,6 +44,10 @@ fi
 # shell integrations for iterm2
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 
+# iTerm2: arrow mouse pointer instead of I-beam (OSC 22). Outside tmux only:
+# tmux swallows it, but the pointer set by the outer shell survives into tmux.
+[[ $TERM_PROGRAM == iTerm.app ]] && printf '\e]22;left_ptr\e\\'
+
 # >>> claude-auto-retry >>>
 # Drop any pre-existing `claude` alias (Claude Code's own installer adds one)
 # before defining the wrapper function. Without this, the shell expands the
