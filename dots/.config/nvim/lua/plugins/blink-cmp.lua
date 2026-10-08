@@ -2,21 +2,26 @@ return {
     "saghen/blink.cmp",
 
     opts = function(_, opts)
-        vim.b.completion = true
+        -- Off by default here; <leader>uk still toggles per buffer.
+        -- Snacks picker inputs are prompt buffers, which blink already skips.
+        local disabled_filetypes = { "gitcommit", "gitrebase" }
+
+        local function enabled()
+            if vim.b.completion ~= nil then
+                return vim.b.completion
+            end
+            return not vim.tbl_contains(disabled_filetypes, vim.bo.filetype)
+        end
 
         Snacks.toggle({
             name = "Completion",
-            get = function()
-                return vim.b.completion
-            end,
+            get = enabled,
             set = function(state)
                 vim.b.completion = state
             end,
         }):map("<leader>uk")
 
-        opts.enabled = function()
-            return vim.b.completion ~= false
-        end
+        opts.enabled = enabled
 
         opts.completion = opts.completion or {}
         opts.completion.ghost_text = {
