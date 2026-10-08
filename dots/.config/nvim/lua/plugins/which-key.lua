@@ -3,7 +3,7 @@ return {
     opts = function(_, opts)
         opts.icons = {
             rules = {
-                { pattern = "opencode", icon = "󱙺", color = "cyan" },
+                { pattern = "claude", icon = "󱙺", color = "cyan" },
                 { pattern = "slime", icon = "", color = "red" },
                 { pattern = "undotree", icon = "", color = "red" },
                 { pattern = "worktree", icon = "", color = "orange" },
