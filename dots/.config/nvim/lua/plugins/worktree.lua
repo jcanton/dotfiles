@@ -3,21 +3,30 @@ local function is_icon4py_repo(path)
     return vim.trim(result) == "git@github.com:C2SM/icon4py.git"
 end
 
-local function link_repo_root(path, name, item)
+local function link_repo_root(path, name, item, up)
     local target = path .. "/" .. item
-    if vim.fn.getftype(target) == "link" then
+    local current = vim.uv.fs_readlink(target)
+    if current == up .. item then
         return
     end
+    -- re-point links with the wrong depth, but never touch a real file
+    if current then
+        vim.uv.fs_unlink(target)
+    end
     vim.notify("[worktree] link " .. item .. " for " .. name, vim.log.levels.INFO)
-    vim.fn.system({ "ln", "-s", "../../" .. item, target })
+    vim.fn.system({ "ln", "-s", up .. item, target })
 end
 
 local function link_worktree_assets(path, name)
-    if not path:match("/%.worktrees/") then
+    -- worktrees live at .worktrees/<branch>, and branch names can contain "/"
+    local branch = path:match("/%.worktrees/(.+)$")
+    if not branch then
         return
     end
-    link_repo_root(path, name, "testdata")
-    link_repo_root(path, name, "pyrightconfig.json")
+    local _, slashes = branch:gsub("/", "")
+    local up = string.rep("../", slashes + 2)
+    link_repo_root(path, name, "testdata", up)
+    link_repo_root(path, name, "pyrightconfig.json", up)
 end
 
 local function run_uv_sync(path, name)
