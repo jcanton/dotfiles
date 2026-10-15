@@ -19,6 +19,10 @@ return {
                 { section = "startup" },
             },
         },
+        lazygit = {
+            -- lazygit writes its final directory here on quit, see autocmds.lua
+            env = { LAZYGIT_NEW_DIR_FILE = vim.fn.stdpath("state") .. "/lazygit-new-dir" },
+        },
         picker = {
             sources = {
                 -- explorer picker configuration

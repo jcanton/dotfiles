@@ -76,6 +76,60 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 --------------------------------------------------------------------------------
+--- Follow lazygit worktree switches -------------------------------------------
+--------------------------------------------------------------------------------
+
+-- Switching worktree in lazygit (space) only moves lazygit itself. On quit with
+-- q (not Q) it writes its final directory to LAZYGIT_NEW_DIR_FILE (snacks.lua);
+-- if that is another worktree, cd there, reopen the current file in it and
+-- `git wt setup` it (links + uv sync, no-op if already done).
+local function switch_worktree(root)
+    local name = vim.api.nvim_buf_get_name(0)
+    local old_root = name ~= "" and vim.fs.root(name, ".git")
+    vim.cmd.cd(vim.fn.fnameescape(root))
+    vim.cmd("clearjumps")
+    local same_file = old_root and root .. name:sub(#old_root + 1)
+    if same_file and vim.uv.fs_stat(same_file) then
+        vim.cmd.edit(vim.fn.fnameescape(same_file))
+    else
+        vim.cmd.edit(".")
+    end
+    vim.notify("Switched to " .. root)
+    vim.system({ "git", "wt", "setup", root }, { text = true }, function(obj)
+        local done = vim.tbl_filter(function(line)
+            return vim.startswith(line, "git wt:")
+        end, vim.split(obj.stdout, "\n"))
+        vim.schedule(function()
+            if obj.code ~= 0 then
+                vim.notify("git wt setup failed:\n" .. obj.stderr, vim.log.levels.ERROR)
+            elseif #done > 0 then
+                vim.notify(table.concat(done, "\n"))
+            end
+        end)
+    end)
+end
+
+vim.api.nvim_create_autocmd("TermClose", {
+    group = vim.api.nvim_create_augroup("lazygit_follow_worktree", { clear = true }),
+    desc = "cd to the worktree lazygit switched to",
+    callback = function(args)
+        local term = vim.b[args.buf].snacks_terminal
+        local file = term and term.env and term.env.LAZYGIT_NEW_DIR_FILE
+        if not file or vim.fn.filereadable(file) == 0 then
+            return
+        end
+        local new_root = vim.fs.root(vim.fn.readfile(file)[1], ".git")
+        os.remove(file)
+        if new_root and new_root ~= vim.fs.root(term.cwd or vim.uv.cwd(), ".git") then
+            -- after snacks has closed the lazygit float
+            vim.schedule(function()
+                switch_worktree(new_root)
+            end)
+        end
+    end,
+})
+
+--------------------------------------------------------------------------------
 --- DAP ------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 

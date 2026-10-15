@@ -1,22 +1,26 @@
 customCommands:
+  # Worktrees go through ~/.local/bin/git-wt: always in <main repo>/.worktrees/,
+  # with the icon4py setup (testdata/pyrightconfig links, uv sync) done.
+
   # Worktree for a local branch (select a branch and press W)
   - key: "W"
     context: "localBranches"
     description: "Worktree for branch"
-    command: "git worktree add .worktrees/{{ .SelectedLocalBranch.Name }} {{ .SelectedLocalBranch.Name }}"
+    command: "git wt add {{ .SelectedLocalBranch.Name | quote }}"
     loadingText: "Creating worktree..."
 
-  # Worktree from a remote branch (press W anywhere, type the branch name)
+  # Worktree from a branch name (press W anywhere). "owner:branch" (GitHub's
+  # PR head label) tracks the owner's fork via remote "fork-<owner>".
   - key: "W"
     context: "global"
-    description: "Worktree from remote branch"
+    description: "Worktree from branch name"
     prompts:
       - type: "input"
-        title: "Branch name?"
+        title: "Branch name? (or owner:branch for a fork)"
         key: "Name"
         initialValue: ""
-    command: "git worktree add -b {{ .Form.Name }} .worktrees/{{ .Form.Name }} origin/{{ .Form.Name }}"
-    loadingText: "Creating worktree from remote..."
+    command: "git wt add {{ .Form.Name | quote }}"
+    loadingText: "Creating worktree..."
 
   # Force remove a worktree
   - key: "D"
