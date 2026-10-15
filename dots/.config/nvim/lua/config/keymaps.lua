@@ -21,6 +21,14 @@ vim.keymap.set("n", "<leader>U", function()
 end, { desc = "Toggle undotree" })
 
 --------------------------------------------------------------------------------
+--- Git worktrees --------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+vim.keymap.set("n", "<leader>gW", function()
+    require("config.worktree").pick()
+end, { desc = "Worktrees" })
+
+--------------------------------------------------------------------------------
 --- DAP ------------------------------------------------------------------------
 --- https://lazyvim-ambitious-devs.phillips.codes/course/chapter-17/ -----------
 --- https://github.com/mfussenegger/nvim-dap/blob/a720d4966f758ab22e8ec28812b6df90a53e0f02/doc/dap.txt#L496
