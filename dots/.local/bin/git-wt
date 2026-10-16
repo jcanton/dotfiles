@@ -1,7 +1,8 @@
 #!/bin/sh
 # git wt add <branch>|<owner>:<branch>
 #     Worktree at <main repo>/.worktrees/<branch>, then `git wt setup` it.
-#     A local branch is used as is, otherwise <branch> is fetched and tracked.
+#     A local branch is used as is (for a fork: if it tracks the fork),
+#     otherwise <branch> is fetched and tracked.
 #     <owner>:<branch> (GitHub's PR head label) tracks the owner's fork via
 #     remote fork-<owner>, added if missing (same convention as git prgo).
 # git wt setup [<path>]
@@ -55,7 +56,10 @@ add() {
         remote=origin
         ;;
     esac
-    if [ "$remote" = origin ] && git show-ref --verify --quiet "refs/heads/$branch"; then
+    if git show-ref --verify --quiet "refs/heads/$branch" && {
+        [ "$remote" = origin ] ||
+            [ "$(git rev-parse --abbrev-ref "$branch@{upstream}" 2>/dev/null)" = "$remote/$branch" ]
+    }; then
         git worktree add ".worktrees/$branch" "$branch"
     else
         git fetch "$remote" "$branch"
