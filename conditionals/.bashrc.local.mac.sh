@@ -4,6 +4,8 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 
 export CLUSTER_NAME="mac"
 
+alias ciccia_org_music="ssh -t ciccia sudo /usr/local/bin/docker exec -it -u abc beets beet import /music"
+
 # Base16 Shell
 export CLICOLOR=1
 # source $HOME/projects/tinted-shell/scripts/base16-tokyo-night-terminal-storm.sh
