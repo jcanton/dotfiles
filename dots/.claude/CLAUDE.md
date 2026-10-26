@@ -14,3 +14,13 @@ sitting alongside them. On GitHub text it replaces the "🤖 Generated with Clau
 
 **Exception:** comments whose text is parsed by a machine must stay bare. CSCS CI trigger comments
 must begin with `cscs-ci run`, so they carry neither prefix nor footer.
+
+# Writing
+
+Write code comments, docstrings, commit messages, PR descriptions and review comments following
+the `house-style` skill.
+
+# Verification
+
+In icon4py, run the `icon4py-verify` skill right before committing (not for docs-only or
+tests-only commits).
