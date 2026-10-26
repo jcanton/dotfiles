@@ -37,6 +37,10 @@ export JC_COLOR32="059"
 # Make vim/nvim the default editor.
 export EDITOR='nvim'
 
+# Config in ~/.config on macOS too, where bootstrap links it (lazygit and
+# platformdirs-based tools default to ~/Library/Application Support).
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # Add to the `$PATH`
 export PATH="$HOME/.local/bin:$PATH"
 #export INCLUDE="$HOME/.local/include" # This doesn't even exist on macOS
