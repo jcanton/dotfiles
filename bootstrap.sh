@@ -11,7 +11,8 @@
 #
 # dots/ mirrors $HOME: every tracked file gets a symlink and the directories
 # above it are real directories, so programs writing next to their config
-# don't write into this repo. WHOLE_DIRS are linked whole instead.
+# don't write into this repo. WHOLE_DIRS are linked whole instead. Links to
+# files deleted from dots/ are removed.
 #
 # conditionals/<profile>.links lists per-machine links, one per line: a path
 # in conditionals/, then the link's path in $HOME. The profile is the one
@@ -145,6 +146,18 @@ link_dots() {
     done < <(git -C "$REPO" ls-files -z dots)
 }
 
+prune_dots() { # remove links to files since deleted from dots/
+    local rel link
+    while IFS= read -r rel; do
+        rel=${rel#dots/}
+        link=$HOME/$rel
+        if [[ -L $link && ! -e $link && $(readlink "$link") == "$DOTS/$rel" ]]; then
+            run rm "$link"
+            echo "unlink  $(tilde "$link")"
+        fi
+    done < <(git -C "$REPO" log --no-renames --diff-filter=D --name-only --format= -- dots | sort -u)
+}
+
 link_profile() {
     local profile=$1 src link
     while read -r src link || [[ -n $src ]]; do
@@ -251,6 +264,7 @@ fi
 if $remember; then run git -C "$REPO" config --local bootstrap.profile "$profile"; fi
 
 link_dots
+prune_dots
 if [[ -n $profile ]]; then
     link_profile "$profile"
 else
