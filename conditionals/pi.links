@@ -1,0 +1,4 @@
+.bashrc.local.pi.sh         .bashrc.local
+alacritty.raspberry.toml    .config/alacritty.toml
+i3                          .config/i3
+.Xmodmap                    .Xmodmap

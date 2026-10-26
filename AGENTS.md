@@ -4,27 +4,28 @@ Quick-start context for AI agents working in this dotfiles repo.
 
 ## What this repo is
 
-A shell-script-based dotfiles manager. `bootstrap.sh` symlinks everything in `dots/` into `$HOME`. No stow, chezmoi, or bare-git tricks.
+A shell-script-based dotfiles manager. `bootstrap.sh` symlinks the files tracked in `dots/` into `$HOME`. No stow, chezmoi, or bare-git tricks.
 
 ## Key commands
 
 | Task | Command |
 |---|---|
-| Install / re-link dotfiles | `source bootstrap.sh` (must be **sourced**, not executed) |
-| Update after `git pull` | Nothing — symlinks are live; changes take effect immediately |
+| Install / re-link dotfiles | `./bootstrap.sh` (executed, never sourced; `--dry-run` previews) |
+| Update | `git pull`; the post-merge/post-rewrite hooks bootstrap installs re-run it with `--no-tmux` |
 | Install Homebrew packages | `bash do_not_move/brew.sh` (manual, one-time; not called by bootstrap) |
 
 ## Directory layout
 
-- `dots/` — every file here is symlinked 1-to-1 into `$HOME` by bootstrap
-- `conditionals/` — machine-specific configs (`.bashrc.local.*.sh`, `.macos`, alacritty, i3, iTerm, SSH); linked **interactively** at bootstrap time (user is prompted for each target name)
-- `do_not_move/` — scripts that should never be symlinked; currently only `brew.sh`
+- `dots/` — mirrors `$HOME`: each **tracked** file gets a symlink, the directories above it are real directories. `.config/nvim` and `.vim` are linked whole (`WHOLE_DIRS` in `bootstrap.sh`). A new file is linked only once it is committed.
+- `conditionals/` — machine-specific configs. `<profile>.links` lists `source target` pairs (source in `conditionals/`, target in `$HOME`). The profile is `mac` on macOS, else `$CLUSTER_NAME` or `hostname -s`, or the one set once with `--profile NAME` (stored as `bootstrap.profile` in the clone's git config).
+- `do_not_move/` — scripts that should never be symlinked
 
 ## Bootstrap quirks
 
-- `conditionals/` items require an interactive `read` prompt during bootstrap — they are **not** auto-linked. Each needs a target filename supplied by the user.
-- When bootstrap displaces an existing file it moves it to `originals_YYYYMMDD/` (gitignored).
+- When bootstrap displaces an existing file it moves it to `originals/<time>/` under its path in `$HOME` (gitignored; older runs left `originals_YYYYMMDD/`).
+- It refuses to replace an old whole-directory link whose repo directory holds untracked files; move them out first.
 - `com.googlecode.iterm2.plist` is at the repo root but is **not** bootstrapped — point to it manually from iTerm2 preferences.
+- `conditionals/.macos` is a script to run by hand; `conditionals/iTerm/` is not linked by any profile.
 
 ## Shell config chain
 

@@ -1,0 +1,4 @@
+.bashrc.local.mac.sh        .bashrc.local
+alacritty.mac.toml          .config/alacritty.toml
+karabiner                   .config/karabiner
+qmk.ini                     .config/qmk/qmk.ini

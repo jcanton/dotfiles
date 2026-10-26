@@ -6,17 +6,21 @@
 
 ### Using Git and the bootstrap script
 
-You can clone the repository wherever you want. (I like to keep it in `~/projects/dotfiles`.) The bootstrapper script will copy the files to your home folder.
+You can clone the repository wherever you want. (I like to keep it in `~/projects/dotfiles`.) The bootstrapper script links the files into your home folder, moving whatever is in the way to `originals/`. Run it with `--dry-run` first to see what it would change.
 
 ```bash
-git clone git@github.com:jcanton/dotfiles.git && cd dotfiles && source bootstrap.sh
+git clone git@github.com:jcanton/dotfiles.git && cd dotfiles && ./bootstrap.sh
 ```
+
+Machine-specific files come from a profile in `conditionals/` (`mac`, `pi`, `santis`, `ela`). It is picked from the machine's name; elsewhere, pick it once with `./bootstrap.sh --profile NAME`.
 
 To update, `cd` into your local `dotfiles` repository and then:
 
 ```bash
 git pull
 ```
+
+Git hooks installed by the bootstrapper link any files the pull added.
 
 
 ### Specify the `$PATH`
