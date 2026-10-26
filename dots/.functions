@@ -56,12 +56,6 @@ sshmount() {
     elif [ "$diskName" == "santis" ]; then
         command="sshfs santis:/capstor/scratch/cscs/jcanton/ ${diskDir} ${dst_options}"
 
-    elif [ "$diskName" == "squirrel" ]; then
-        command="sshfs ${tunnel_options} squirrel:/home/l_jcanton ${diskDir} ${dst_options}"
-
-    elif [ "$diskName" == "squirrelS" ]; then
-        command="sshfs ${tunnel_options} squirrel:/scratch/l_jcanton ${diskDir} ${dst_options}"
-
     elif [ "$diskName" == "co2" ]; then
         command="sshfs ${tunnel_options} fog:/net/co2/exclaim/jcanton ${diskDir} ${dst_options}"
 
