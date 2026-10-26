@@ -6,8 +6,9 @@
 #     <owner>:<branch> (GitHub's PR head label) tracks the owner's fork via
 #     remote fork-<owner>, added if missing (same convention as git prgo).
 # git wt setup [<path>]
-#     icon4py worktrees only: link testdata and pyrightconfig.json from the
-#     main repo, uv sync if there is no .venv yet. Safe to rerun.
+#     icon4py worktrees only: link testdata, pyrightconfig.json and the
+#     untracked .claude/skills from the main repo, uv sync if there is no
+#     .venv yet. Safe to rerun.
 set -e
 
 setup() {
@@ -20,9 +21,12 @@ setup() {
     esac
     # one .. per path component, e.g. .worktrees/a/b -> ../../..
     up=$(echo ".worktrees/$branch" | sed 's#[^/][^/]*#..#g')
-    for item in testdata pyrightconfig.json; do
+    for item in testdata pyrightconfig.json .claude/skills; do
+        [ -e "$wt/$up/$item" ] || continue
         target=$wt/$item
-        [ "$(readlink "$target")" = "$up/$item" ] && continue
+        # one .. per directory between the main repo and the link
+        link=$(dirname ".worktrees/$branch/$item" | sed 's#[^/][^/]*#..#g')/$item
+        [ "$(readlink "$target")" = "$link" ] && continue
         # re-point links with the wrong depth, but never touch a real file
         if [ -L "$target" ]; then
             rm "$target"
@@ -30,7 +34,8 @@ setup() {
             continue
         fi
         echo "git wt: link $item"
-        ln -s "$up/$item" "$target"
+        mkdir -p "$(dirname "$target")"
+        ln -s "$link" "$target"
     done
     if [ ! -d "$wt/.venv" ]; then
         echo "git wt: uv sync"
