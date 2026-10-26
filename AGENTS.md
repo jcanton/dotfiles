@@ -11,7 +11,7 @@ A shell-script-based dotfiles manager. `bootstrap.sh` symlinks the files tracked
 | Task | Command |
 |---|---|
 | Install / re-link dotfiles | `./bootstrap.sh` (executed, never sourced; `--dry-run` previews) |
-| Update | `git pull`; the post-merge/post-rewrite hooks bootstrap installs re-run it with `--no-tmux` |
+| Update | `dotsync` (in `.functions`) pulls this repo and agent-config; the post-merge/post-rewrite hooks bootstrap installs re-run `bootstrap.sh --links-only` and agent-config's `install.sh --force` |
 | Install Homebrew packages | `bash do_not_move/brew.sh` (manual, one-time; not called by bootstrap) |
 
 ## Directory layout
@@ -19,6 +19,7 @@ A shell-script-based dotfiles manager. `bootstrap.sh` symlinks the files tracked
 - `dots/` — mirrors `$HOME`: each **tracked** file gets a symlink, the directories above it are real directories. `.config/nvim` and `.vim` are linked whole (`WHOLE_DIRS` in `bootstrap.sh`). A new file is linked only once it is committed.
 - `conditionals/` — machine-specific configs. `<profile>.links` lists `source target` pairs (source in `conditionals/`, target in `$HOME`). The profile is `mac` on macOS, else `$CLUSTER_NAME` or `hostname -s`, or the one set once with `--profile NAME` (stored as `bootstrap.profile` in the clone's git config).
 - `do_not_move/` — scripts that should never be symlinked
+- `../agent-config/` — separate repo (Claude Code skills, agents, settings) that bootstrap clones next to this one and links with its own `install.sh`; it gets `rebase.autoStash` because Claude Code edits `settings.json` in place. The global `~/.claude/CLAUDE.md` lives here instead, in `dots/.claude/`.
 
 ## Bootstrap quirks
 

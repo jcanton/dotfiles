@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+# Pull the dotfiles and agent-config; their git hooks link what the pulls add
+function dotsync() {
+    local dotfiles repo
+    dotfiles=$(readlink ~/.functions)
+    dotfiles=${dotfiles%/dots/.functions}
+    for repo in "$dotfiles" "$(dirname "$dotfiles")/agent-config"; do
+        echo "${repo##*/}:"
+        git -C "$repo" pull || return
+    done
+}
+
 # Create a new directory and enter it
 function mkd() {
     mkdir -p "$@" && cd "$_"

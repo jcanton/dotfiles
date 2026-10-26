@@ -3,11 +3,11 @@
 # Link the dotfiles into $HOME. Safe to re-run, and git hooks re-run it after
 # every pull, so files added to the repo get linked on every machine.
 #
-#   ./bootstrap.sh [--profile NAME] [--dry-run] [--no-tmux]
+#   ./bootstrap.sh [--profile NAME] [--dry-run] [--links-only]
 #
 #   --profile NAME  link conditionals/NAME.links on this machine, and remember it
 #   --dry-run       print what would change, change nothing
-#   --no-tmux       skip installing the tmux plugins
+#   --links-only    skip agent-config and the tmux plugins (what the hooks run)
 #
 # dots/ mirrors $HOME: every tracked file gets a symlink and the directories
 # above it are real directories, so programs writing next to their config
@@ -20,6 +20,9 @@
 #
 # Whatever is in a link's way is moved to originals/<time>/, under the path it
 # had in $HOME.
+#
+# agent-config (Claude Code skills and settings) is cloned next to this repo
+# and linked by its own install.sh, which its git hooks re-run after pulls.
 
 if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
     echo "bootstrap.sh: run it as ./bootstrap.sh, don't source it" >&2
@@ -35,6 +38,8 @@ REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 DOTS=$REPO/dots
 CONDITIONALS=$REPO/conditionals
 BACKUP=$REPO/originals/$(date +%Y%m%d-%H%M%S)
+AGENT_CONFIG=$(dirname "$REPO")/agent-config
+AGENT_CONFIG_URL=https://github.com/jcanton/agent-config.git
 
 dry_run=false
 # Directories a dry run pretends to have made, one per line.
@@ -171,27 +176,44 @@ detect_profile() {
     done
 }
 
-install_hooks() { # a pull that fast-forwards runs post-merge, one that rebases post-rewrite
-    local hooks hook
-    hooks=$(git -C "$REPO" rev-parse --git-path hooks)
-    if [[ $hooks != /* ]]; then hooks=$REPO/$hooks; fi
+install_hooks() { # make pulls in repo $1 run its script $2 with the option $3
+    local repo=$1 script=$2 option=$3 marker='Installed by bootstrap.sh' hooks hook content
+    hooks=$(git -C "$repo" rev-parse --git-path hooks)
+    if [[ $hooks != /* ]]; then hooks=$repo/$hooks; fi
+    content=$(printf '#!/bin/sh\n# %s in dotfiles: link what the pull added.\nexec "%s/%s" %s\n' "$marker" "$repo" "$script" "$option")
+    # A pull that fast-forwards runs post-merge, one that rebases post-rewrite.
     for hook in post-merge post-rewrite; do
-        if grep -qs 'Installed by bootstrap.sh' "$hooks/$hook"; then continue; fi
-        if [[ -e $hooks/$hook ]]; then
+        if [[ -e $hooks/$hook && $(<"$hooks/$hook") == "$content" ]]; then continue; fi
+        if [[ -e $hooks/$hook ]] && ! grep -q "$marker" "$hooks/$hook"; then
             echo "bootstrap.sh: $hooks/$hook exists, not replacing it" >&2
             continue
         fi
         if ! $dry_run; then
             mkdir -p "$hooks"
-            cat >"$hooks/$hook" <<'EOF'
-#!/bin/sh
-# Installed by bootstrap.sh: link what the pull added.
-exec "$(git rev-parse --show-toplevel)/bootstrap.sh" --no-tmux
-EOF
+            echo "$content" >"$hooks/$hook"
             chmod +x "$hooks/$hook"
         fi
-        echo "hook    $hook"
+        echo "hook    ${repo##*/} $hook"
     done
+}
+
+setup_agent_config() {
+    if [[ ! -d $AGENT_CONFIG ]]; then
+        echo "clone   $AGENT_CONFIG"
+        if $dry_run; then return 0; fi
+        git clone "$AGENT_CONFIG_URL" "$AGENT_CONFIG"
+    fi
+    # Claude Code edits settings.json in place; let pulls stash those edits.
+    if [[ $(git -C "$AGENT_CONFIG" config --get rebase.autoStash) != true ]]; then
+        run git -C "$AGENT_CONFIG" config --local rebase.autoStash true
+        echo "config  agent-config rebase.autoStash"
+    fi
+    install_hooks "$AGENT_CONFIG" install.sh --force
+    if $dry_run; then
+        "$AGENT_CONFIG/install.sh" --dry-run
+    else
+        "$AGENT_CONFIG/install.sh"
+    fi
 }
 
 setup_tmux() { # install TPM and the plugins .tmux.conf lists
@@ -209,12 +231,12 @@ setup_tmux() { # install TPM and the plugins .tmux.conf lists
     tmux kill-session -t __noop 2>/dev/null || true
 }
 
-profile='' remember=false no_tmux=false
+profile='' remember=false links_only=false
 while (($#)); do
     case $1 in
     --profile) profile=${2:?--profile needs a name}; remember=true; shift 2 ;;
     --dry-run) dry_run=true; shift ;;
-    --no-tmux) no_tmux=true; shift ;;
+    --links-only) links_only=true; shift ;;
     *) die "unknown argument $1, see the top of bootstrap.sh" ;;
     esac
 done
@@ -234,5 +256,8 @@ if [[ -n $profile ]]; then
 else
     echo "No profile for $(hostname -s), so nothing from conditionals/ is linked. Pick one with --profile: $(profiles)"
 fi
-install_hooks
-if ! $no_tmux; then setup_tmux; fi
+install_hooks "$REPO" bootstrap.sh --links-only
+if ! $links_only; then
+    setup_agent_config
+    setup_tmux
+fi
