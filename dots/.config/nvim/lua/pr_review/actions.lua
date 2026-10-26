@@ -207,6 +207,7 @@ local function compose(opts)
         ft = "markdown",
         text = drafts[opts.key] or opts.template or "",
         bo = { buftype = "nofile", bufhidden = "wipe", swapfile = false },
+        b = { completion = false }, -- blink.cmp off (<leader>uk turns it back on)
         wo = {
             wrap = true,
             linebreak = true,
@@ -663,7 +664,7 @@ local function entries(ctx)
         end)
         local t = {
             { k.reply, "Reply", M.reply },
-            { k.react, "React", M.react },
+            { k.react, "React to comment", M.react },
             { k.resolve, thread.isResolved and "Unresolve" or "Resolve", M.resolve },
             { k.toggle, review:is_collapsed(thread) and "Expand" or "Collapse", M.toggle },
             { k.browse, "Open thread on GitHub", M.browse },
@@ -886,6 +887,34 @@ end
 -- Keymaps
 --------------------------------------------------------------------------------
 
+-- Descriptions (which-key, :map) by config.keys name.
+local DESC = {
+    menu = "PR review actions",
+    legend = "PR review keys",
+    next_thread = "Next review thread",
+    prev_thread = "Prev review thread",
+    next_file_thread = "Next file with open threads",
+    prev_file_thread = "Prev file with open threads",
+    comment = "Comment on line",
+    file_comment = "Comment on file",
+    reply = "Reply to thread",
+    react = "React to comment",
+    resolve = "Resolve / unresolve thread",
+    edit = "Edit comment",
+    delete = "Delete comment",
+    toggle = "Collapse / expand thread",
+    outdated = "Show / hide outdated threads",
+    viewed = "Mark file viewed / unviewed",
+    start = "Start a review",
+    submit = "Submit review",
+    discard = "Discard pending review",
+    browse = "Open on GitHub",
+    overview = "PR conversation",
+    refresh = "Refresh from GitHub",
+    files = "PR file tree",
+    files_toggle = "Toggle PR file tree",
+}
+
 local function map(review, buf, mode, lhs, fn, desc, fallback)
     vim.keymap.set(mode, lhs, function()
         local ctx = M.context()
@@ -896,7 +925,7 @@ local function map(review, buf, mode, lhs, fn, desc, fallback)
             return
         end
         fn(ctx)
-    end, { buffer = buf, desc = "PR: " .. desc })
+    end, { buffer = buf, desc = desc })
     review.mapped[buf] = review.mapped[buf] or {}
     table.insert(review.mapped[buf], { mode, lhs })
 end
@@ -908,26 +937,31 @@ function M.attach(review, buf)
     end
     local k = init().config.keys
     review.mapped[buf] = {}
-    map(review, buf, "n", k.menu, M.menu, "actions", true)
-    map(review, buf, "n", k.legend, M.legend, "keys", true)
+    -- hidden again by which-key once the review's keys are gone
+    local ok, wk = pcall(require, "which-key")
+    if ok then
+        wk.add({ { k.group, group = "PR review", icon = { icon = "\u{f407}", color = "purple" }, buffer = buf } })
+    end
+    map(review, buf, "n", k.menu, M.menu, DESC.menu, true)
+    map(review, buf, "n", k.legend, M.legend, DESC.legend, true)
     map(review, buf, "n", k.next_thread, function()
         M.goto_thread(nil, 1)
-    end, "next thread", true)
+    end, DESC.next_thread, true)
     map(review, buf, "n", k.prev_thread, function()
         M.goto_thread(nil, -1)
-    end, "prev thread", true)
+    end, DESC.prev_thread, true)
     map(review, buf, "n", k.next_file_thread, function(ctx)
         M.file_thread(ctx, 1)
-    end, "next file with open threads")
+    end, DESC.next_file_thread)
     map(review, buf, "n", k.prev_file_thread, function(ctx)
         M.file_thread(ctx, -1)
-    end, "prev file with open threads")
-    map(review, buf, "n", k.comment, M.comment, "comment on line")
+    end, DESC.prev_file_thread)
+    map(review, buf, "n", k.comment, M.comment, DESC.comment)
     map(review, buf, "x", k.comment, function(ctx)
         local s, e = vim.fn.line("v"), vim.fn.line(".")
         vim.cmd("normal! \27")
         M.comment(ctx, { s, e })
-    end, "comment on lines")
+    end, "Comment on lines (suggestion)")
     for _, name in ipairs({
         "file_comment",
         "reply",
@@ -947,15 +981,15 @@ function M.attach(review, buf)
         "files",
         "files_toggle",
     }) do
-        map(review, buf, "n", k[name], M[name], (name:gsub("_", " ")))
+        map(review, buf, "n", k[name], M[name], DESC[name])
     end
     map(review, buf, "n", "<LeftRelease>", function()
         M.click()
-    end, "click box button", true)
+    end, "Click review box button", true)
     -- codediff closes with qq: a lone q only says so (and records no macro)
     map(review, buf, "n", "q", function()
         vim.api.nvim_echo({ { "qq (or hold q) closes the review", "WarningMsg" } }, false, {})
-    end, "qq closes the review", true)
+    end, "qq closes the PR review", true)
 end
 
 return M

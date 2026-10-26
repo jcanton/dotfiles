@@ -31,7 +31,8 @@ return {
         },
         opts = {
             diff = { compact = true },
-            explorer = { line_stats = { enabled = true } },
+            -- tree: ]f / [f walk the files in the PR file tree's order
+            explorer = { view_mode = "tree", line_stats = { enabled = true } },
             -- q alone is too easy to hit: close with qq (or by holding q)
             keymaps = { view = { quit = "qq" } },
         },

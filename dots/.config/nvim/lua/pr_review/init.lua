@@ -45,6 +45,7 @@ M.config = {
         browse = "<leader>rb",
         overview = "<leader>rp",
         refresh = "<leader>rR",
+        group = "<leader>r", -- which-key group of the keys above
         -- replace codediff's explorer keys with the snacks file tree
         files = "<leader>e",
         files_toggle = "<leader>b",
@@ -265,6 +266,24 @@ function M.hook_codediff()
             return "0"
         end
         return foldexpr()
+    end
+
+    -- ]f / [f move the cursor in codediff's explorer window, which the file
+    -- tree replaces (hidden: winid nil, and nvim_win_is_valid(nil) throws)
+    local explorer = require("codediff.ui.explorer")
+    for _, name in ipairs({ "navigate_next", "navigate_prev" }) do
+        local navigate = explorer[name]
+        explorer[name] = function(view, ...)
+            if not (view and view.winid == nil) then
+                return navigate(view, ...)
+            end
+            view.winid = -1
+            local ok, err = pcall(navigate, view, ...)
+            view.winid = nil
+            if not ok then
+                error(err, 0)
+            end
+        end
     end
 
     local group = vim.api.nvim_create_augroup("pr_review", { clear = true })

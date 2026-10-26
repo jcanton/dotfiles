@@ -150,6 +150,34 @@ local function open_file(review, item)
     focus_diff(review)
 end
 
+-- Refresh the tree and put its cursor on `path`, opening the directories
+-- above it.
+local function reveal(review, path)
+    local picker = review.files_picker
+    for rel in pairs(review.closed_dirs) do
+        if vim.startswith(path, rel .. "/") then
+            review.closed_dirs[rel] = nil
+        end
+    end
+    picker.list:set_target()
+    picker:find({ refresh = true })
+    -- not find's on_done: it can run before the finder is done, and the
+    -- matcher then resets the cursor
+    local function view()
+        if picker.closed then
+            return
+        elseif picker:is_active() then
+            return vim.defer_fn(view, 20)
+        end
+        for item, idx in picker:iter() do
+            if item.rel == path then
+                return picker.list:view(idx)
+            end
+        end
+    end
+    vim.schedule(view)
+end
+
 -- Called after a sync: focus the diff if a file was just opened, and keep
 -- the picker in step with the shown file and the data.
 function M.update(review, session, force)
@@ -169,27 +197,10 @@ function M.update(review, session, force)
         return
     end
     review.files_key, review.shown = key, path
-    picker.list:set_target()
-    picker:find({
-        refresh = true,
-        on_done = function()
-            if picker.closed then
-                return
-            end
-            for item, idx in picker:iter() do
-                if item.rel == path then
-                    picker.list:view(idx)
-                    return
-                end
-            end
-        end,
-    })
+    reveal(review, path)
 end
 
-function M.open(review)
-    if review.files_picker and not review.files_picker.closed then
-        return review.files_picker:focus()
-    end
+local function create(review)
     review.closed_dirs = review.closed_dirs or {}
     review.files_key = nil
     review.files_picker = Snacks.picker({
@@ -277,6 +288,19 @@ function M.open(review)
             review.files_picker = nil
         end,
     })
+end
+
+-- Open (or focus) the tree, on the file shown in the diff.
+function M.open(review)
+    if review.files_picker and not review.files_picker.closed then
+        review.files_picker:focus()
+    else
+        create(review)
+    end
+    local session = lifecycle().get_session(review.tab)
+    if session then
+        M.update(review, session, true)
+    end
 end
 
 function M.toggle(review)
