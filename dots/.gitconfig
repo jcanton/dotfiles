@@ -43,16 +43,8 @@
     # Switch to a branch, creating it if necessary.
     go = "!f() { git checkout -b \"$1\" 2> /dev/null || git checkout \"$1\"; }; f"
 
-    # checkout PR from forked repo a-la `msimberg:diffusion-mask-fix-torus`
-    prgo = "!f() { \
-        spec=\"$1\"; \
-        owner=\"${spec%%:*}\"; branch=\"${spec#*:}\"; remote=\"fork-${owner}\"; \
-        [ -z \"$owner\" ] || [ -z \"$branch\" ] || [ \"$owner\" = \"$branch\" ] && { echo \"Usage: git prgo owner:branch\"; exit 1; }; \
-        origin_url=$(git remote get-url origin 2>/dev/null) || { echo \"No origin remote\"; exit 1; }; \
-        repo=$(basename -s .git \"$origin_url\"); \
-        git remote get-url \"$remote\" >/dev/null 2>&1 || git remote add \"$remote\" \"git@github.com:${owner}/${repo}.git\"; \
-        git fetch \"$remote\" && git checkout -b \"$branch\" \"${remote}/${branch}\"; \
-    }; f"
+    # Check out a PR branch, also from a fork a-la `msimberg:diffusion-mask-fix-torus`
+    prgo = !git wt checkout
 
     # Show verbose output about tags, branches or remotes
     tags = tag -l

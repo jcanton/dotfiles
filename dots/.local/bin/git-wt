@@ -4,7 +4,9 @@
 #     A local branch is used as is (for a fork: if it tracks the fork),
 #     otherwise <branch> is fetched and tracked.
 #     <owner>:<branch> (GitHub's PR head label) tracks the owner's fork via
-#     remote fork-<owner>, added if missing (same convention as git prgo).
+#     remote fork-<owner>, added if missing.
+# git wt checkout <branch>|<owner>:<branch>
+#     The same branch as `add`, checked out here instead (git prgo).
 # git wt new <branch> [<base>]
 #     New branch off <base> (default: the checked-out branch), in a worktree
 #     at <main repo>/.worktrees/<branch>, then `git wt setup` it. Without
@@ -49,17 +51,17 @@ setup() {
     fi
 }
 
-add() {
-    # always relative to the main repo, also when called from inside a worktree
-    cd "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+# Set branch and remote for <branch>|<owner>:<branch>, adding remote
+# fork-<owner> if missing. use_local=1 if the local branch can be used as is
+# (for a fork: if it tracks the fork), otherwise the branch is fetched.
+resolve() {
     case "$1" in
     *:*)
-        owner=${1%%:*}
         branch=${1#*:}
-        remote=fork-$owner
+        remote=fork-${1%%:*}
         if ! git remote get-url "$remote" >/dev/null 2>&1; then
             repo=$(basename "$(git remote get-url origin)" .git)
-            git remote add "$remote" "git@github.com:$owner/$repo.git"
+            git remote add "$remote" "git@github.com:${1%%:*}/$repo.git"
         fi
         ;;
     *)
@@ -67,16 +69,36 @@ add() {
         remote=origin
         ;;
     esac
+    use_local=
     if git show-ref --verify --quiet "refs/heads/$branch" && {
         [ "$remote" = origin ] ||
             [ "$(git rev-parse --abbrev-ref "$branch@{upstream}" 2>/dev/null)" = "$remote/$branch" ]
     }; then
-        git worktree add ".worktrees/$branch" "$branch"
+        use_local=1
     else
         git fetch "$remote" "$branch"
+    fi
+}
+
+add() {
+    # always relative to the main repo, also when called from inside a worktree
+    cd "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+    resolve "$1"
+    if [ -n "$use_local" ]; then
+        git worktree add ".worktrees/$branch" "$branch"
+    else
         git worktree add --track -b "$branch" ".worktrees/$branch" "$remote/$branch"
     fi
     setup ".worktrees/$branch"
+}
+
+checkout() {
+    resolve "$1"
+    if [ -n "$use_local" ]; then
+        git checkout "$branch"
+    else
+        git checkout --track -b "$branch" "$remote/$branch"
+    fi
 }
 
 new() {
@@ -114,6 +136,7 @@ new() {
 
 usage() {
     echo "usage: git wt add <branch>|<owner>:<branch>" >&2
+    echo "       git wt checkout <branch>|<owner>:<branch>" >&2
     echo "       git wt new <branch> [<base>]" >&2
     echo "       git wt setup [<path>]" >&2
     exit 1
@@ -123,6 +146,10 @@ case "$1" in
 add)
     [ -n "$2" ] || usage
     add "$2"
+    ;;
+checkout)
+    [ -n "$2" ] || usage
+    checkout "$2"
     ;;
 new)
     [ -n "$2" ] || usage
