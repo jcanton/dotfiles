@@ -12,6 +12,30 @@ vim.keymap.set("n", "<leader><Bslash>", "<C-W>v", { desc = "Split Window Right",
 vim.keymap.set("n", "<leader>9", "<C-W>s", { desc = "Split Window Below", remap = true })
 
 --------------------------------------------------------------------------------
+--- Conceal --------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+-- LazyVim's <leader>uc, but in buffers render-markdown draws it toggles that
+-- instead, which otherwise sets conceallevel back to 3 on every redraw (and to
+-- 0 when off, plugins/render-markdown.lua).
+Snacks.toggle({
+    name = "Conceal Level",
+    get = function()
+        return vim.wo.conceallevel > 0
+    end,
+    set = function(state)
+        if
+            package.loaded["render-markdown"]
+            and vim.tbl_contains(require("render-markdown.state").file_types, vim.bo.filetype)
+        then
+            require("render-markdown").set_buf(state)
+        else
+            vim.wo.conceallevel = state and 2 or 0
+        end
+    end,
+}):map("<leader>uc")
+
+--------------------------------------------------------------------------------
 --- Undotree (built in since nvim 0.12) ----------------------------------------
 --------------------------------------------------------------------------------
 
@@ -27,6 +51,9 @@ end, { desc = "Toggle undotree" })
 vim.keymap.set("n", "<leader>gW", function()
     require("config.worktree").pick()
 end, { desc = "Worktrees" })
+vim.keymap.set("n", "<leader>gN", function()
+    require("config.worktree").new()
+end, { desc = "New branch in worktree" })
 
 --------------------------------------------------------------------------------
 --- DAP ------------------------------------------------------------------------

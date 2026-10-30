@@ -22,6 +22,28 @@ customCommands:
     command: "git wt add {{ .Form.Name | quote }}"
     loadingText: "Creating worktree..."
 
+  # New or existing branch in a new worktree (press N anywhere). An existing
+  # one, local or on origin (or owner:branch), is checked out as with W. Runs
+  # in a terminal because, for a new branch off anything but main, git wt asks
+  # whether to branch off it or off main. Inside nvim ($NVIM), nvim then
+  # reopens lazygit in the new worktree and switches there too
+  # (lazygit_created in nvim's config/worktree.lua).
+  - key: "N"
+    context: "global"
+    description: "New or existing branch in worktree"
+    prompts:
+      - type: "input"
+        title: "Branch name (new, existing or owner:branch)"
+        key: "Name"
+        initialValue: ""
+    command: >-
+      git wt new {{ .Form.Name | quote }} &&
+      if [ -n "$NVIM" ]; then
+      nvim --server "$NVIM" --remote-expr
+      "v:lua.require'config.worktree'.lazygit_created('$(git rev-parse --path-format=absolute --git-common-dir)', '{{ .Form.Name }}')"
+      >/dev/null; fi
+    output: terminal
+
   # Force remove a worktree
   - key: "D"
     context: "worktrees"
