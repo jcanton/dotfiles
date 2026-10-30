@@ -5,6 +5,12 @@
 #     otherwise <branch> is fetched and tracked.
 #     <owner>:<branch> (GitHub's PR head label) tracks the owner's fork via
 #     remote fork-<owner>, added if missing (same convention as git prgo).
+# git wt new <branch> [<base>]
+#     New branch off <base> (default: the checked-out branch), in a worktree
+#     at <main repo>/.worktrees/<branch>, then `git wt setup` it. Without
+#     <base>, from a terminal and not on the default branch (main), asks
+#     whether to branch off the checked-out branch or main. If <branch>
+#     exists locally or on origin, or is <owner>:<branch>, does `add` instead.
 # git wt setup [<path>]
 #     icon4py worktrees only: link testdata, pyrightconfig.json and the
 #     untracked .claude/skills from the main repo, uv sync if there is no
@@ -73,8 +79,42 @@ add() {
     setup ".worktrees/$branch"
 }
 
+new() {
+    # an existing branch, local or on origin (or a fork's owner:branch), is
+    # checked out with add instead
+    if [ "${1#*:}" != "$1" ] || git show-ref --verify --quiet "refs/heads/$1" ||
+        git ls-remote --exit-code --heads origin "$1" >/dev/null; then
+        add "$1"
+        return
+    fi
+    if [ -n "$2" ]; then
+        base=$2
+    else
+        base=$(git branch --show-current)
+        default=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD) || default=origin/main
+        default=${default#origin/}
+        if [ "$base" != "$default" ] && [ -t 0 ]; then
+            printf 'Branch %s off [c]urrent %s or [m]ain (%s)? [c/m, other aborts] ' \
+                "$1" "${base:-detached HEAD}" "$default"
+            read -r answer
+            case "$answer" in
+            c) ;;
+            m) base=$default ;;
+            *) exit 1 ;;
+            esac
+        fi
+        # the detached HEAD of this worktree, not of the main repo
+        base=${base:-$(git rev-parse HEAD)}
+    fi
+    # always relative to the main repo, also when called from inside a worktree
+    cd "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+    git worktree add --no-track -b "$1" ".worktrees/$1" "$base"
+    setup ".worktrees/$1"
+}
+
 usage() {
     echo "usage: git wt add <branch>|<owner>:<branch>" >&2
+    echo "       git wt new <branch> [<base>]" >&2
     echo "       git wt setup [<path>]" >&2
     exit 1
 }
@@ -83,6 +123,10 @@ case "$1" in
 add)
     [ -n "$2" ] || usage
     add "$2"
+    ;;
+new)
+    [ -n "$2" ] || usage
+    new "$2" "$3"
     ;;
 setup) setup "$2" ;;
 *) usage ;;

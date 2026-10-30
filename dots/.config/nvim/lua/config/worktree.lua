@@ -1,5 +1,5 @@
--- Switching git worktrees: used by <leader>gW (keymaps.lua) and when lazygit
--- quits after switching worktree (autocmds.lua).
+-- Switching git worktrees: used by <leader>gW and <leader>gN (keymaps.lua) and
+-- when lazygit quits after switching worktree (autocmds.lua).
 local M = {}
 
 -- cd to the worktree at root, reopen the current file in it and `git wt setup`
@@ -30,14 +30,14 @@ function M.switch(root)
     end)
 end
 
--- Fuzzy-pick a worktree of the current repo and switch to it.
-function M.pick()
-    local lines = vim.fn.systemlist({ "git", "worktree", "list", "--porcelain" })
+-- The worktrees of the repo at dir (default: cwd), nil outside one. Porcelain:
+-- a "worktree <path>" line starts each entry, "branch refs/heads/<name>"
+-- follows, and "prunable" (last) marks one whose directory is gone.
+local function list(dir)
+    local lines = vim.fn.systemlist({ "git", "-C", dir or ".", "worktree", "list", "--porcelain" })
     if vim.v.shell_error ~= 0 then
-        vim.notify("Not in a git repository", vim.log.levels.WARN)
-        return
+        return nil
     end
-    -- porcelain: a "worktree <path>" line starts each entry, "branch refs/heads/<name>" follows
     local items = {}
     for _, line in ipairs(lines) do
         local path = line:match("^worktree (.+)$")
@@ -46,7 +46,69 @@ function M.pick()
             items[#items + 1] = { path = path, branch = "(detached)" }
         elseif branch then
             items[#items].branch = branch
+        elseif vim.startswith(line, "prunable") then
+            items[#items] = nil
         end
+    end
+    return items
+end
+
+-- Switch to the worktree `git wt new` made for name (a fork's owner:branch is
+-- checked out as branch).
+local function switch_to(name, dir)
+    local branch = name:gsub("^[^:]*:", "")
+    for _, item in ipairs(list(dir) or {}) do
+        if item.branch == branch then
+            return M.switch(item.path)
+        end
+    end
+    vim.notify("No worktree for " .. branch, vim.log.levels.WARN)
+end
+
+-- `git wt new` a worktree for a new or existing branch, in a terminal for its
+-- questions, and switch to it.
+function M.new()
+    vim.ui.input({ prompt = "Branch name (new, existing or owner:branch): " }, function(name)
+        if not name or name == "" then
+            return
+        end
+        local term = Snacks.terminal.open({ "git", "wt", "new", name }, { auto_close = false })
+        -- on failure the terminal stays open to show why
+        term:on("TermClose", function()
+            if vim.v.event.status == 0 then
+                term:close()
+                vim.schedule(function()
+                    switch_to(name)
+                end)
+            end
+        end, { buf = true })
+    end)
+end
+
+-- lazygit's N (lazygit/config.yml) calls this through $NVIM once `git wt new`
+-- made the worktree for name in the repo at dir: close lazygit, switch nvim to
+-- the worktree and reopen lazygit in it.
+function M.lazygit_created(dir, name)
+    -- return to lazygit's remote call before killing it
+    vim.schedule(function()
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            local term = vim.b[buf].snacks_terminal
+            if term and type(term.cmd) == "table" and term.cmd[1] == "lazygit" then
+                vim.api.nvim_buf_delete(buf, { force = true })
+            end
+        end
+        switch_to(name, dir)
+        Snacks.lazygit()
+    end)
+end
+
+-- Fuzzy-pick a worktree of the current repo and switch to it, or create one
+-- with N (normal mode).
+function M.pick()
+    local items = list()
+    if not items then
+        vim.notify("Not in a git repository", vim.log.levels.WARN)
+        return
     end
     for _, item in ipairs(items) do
         item.text = item.branch .. " " .. item.path
@@ -69,6 +131,16 @@ function M.pick()
                 M.switch(item.path)
             end
         end,
+        actions = {
+            new_worktree = function(picker)
+                picker:close()
+                M.new()
+            end,
+        },
+        win = {
+            input = { keys = { ["N"] = { "new_worktree", mode = "n" } } },
+            list = { keys = { ["N"] = "new_worktree" } },
+        },
     })
 end
 

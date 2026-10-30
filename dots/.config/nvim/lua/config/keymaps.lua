@@ -27,6 +27,9 @@ end, { desc = "Toggle undotree" })
 vim.keymap.set("n", "<leader>gW", function()
     require("config.worktree").pick()
 end, { desc = "Worktrees" })
+vim.keymap.set("n", "<leader>gN", function()
+    require("config.worktree").new()
+end, { desc = "New branch in worktree" })
 
 --------------------------------------------------------------------------------
 --- DAP ------------------------------------------------------------------------
