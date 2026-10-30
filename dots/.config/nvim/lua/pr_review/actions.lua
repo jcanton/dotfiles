@@ -224,8 +224,18 @@ end
 ---@param post fun(review_id?: string, cb: fun(err?: string))
 local function submit_actions(review, post)
     local function to_review(body, restore)
-        local function add(id)
-            post(body, id, posted(review, restore))
+        local function add(id, started)
+            local finish = posted(review, restore)
+            post(body, id, function(err)
+                if not (err and started) then
+                    return finish(err)
+                end
+                -- don't leave the review started for this comment behind empty
+                review.pending = nil
+                gh.mutate("delete_review", { pullRequestReviewId = id }, function()
+                    finish(err)
+                end)
+            end)
         end
         if review.pending then
             return add(review.pending)
@@ -236,7 +246,7 @@ local function submit_actions(review, post)
                 return notify(err, vim.log.levels.ERROR)
             end
             review.pending = res.pullRequestReview.id
-            add(review.pending)
+            add(review.pending, true)
         end)
     end
     if review.pending then

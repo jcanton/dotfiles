@@ -218,8 +218,16 @@ function M.load(repo, number, cb)
 end
 
 -- Mutations take a single `input` object, named by their GraphQL input type.
+-- The optional third field is selected from the result; GitHub may answer with
+-- it null instead of an error, which mutate() turns into the fourth (or a
+-- generic) message.
 local MUTATIONS = {
-    add_thread = { "AddPullRequestReviewThreadInput", "addPullRequestReviewThread" },
+    add_thread = {
+        "AddPullRequestReviewThreadInput",
+        "addPullRequestReviewThread",
+        "thread { id }",
+        "GitHub didn't add the comment: only lines in the diff's hunks (changes and the 3 lines around them) take comments",
+    },
     add_reply = { "AddPullRequestReviewThreadReplyInput", "addPullRequestReviewThreadReply" },
     add_review = { "AddPullRequestReviewInput", "addPullRequestReview", "pullRequestReview { id }" },
     submit_review = { "SubmitPullRequestReviewInput", "submitPullRequestReview" },
@@ -244,7 +252,12 @@ function M.mutate(name, input, cb)
         m[3] or ""
     )
     M.graphql(query, { input = input }, function(err, data)
-        cb(err, data and data.result)
+        local result = data and data.result
+        local field = m[3] and m[3]:match("^%w+")
+        if not err and field and not (result and result[field]) then
+            err = m[4] or ("GitHub returned no " .. field .. " for " .. m[2])
+        end
+        cb(err, result)
     end)
 end
 
