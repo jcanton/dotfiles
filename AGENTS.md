@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Quick-start context for AI agents working in this dotfiles repo.
+Quick-start context for AI agents working in this dotfiles repo (test PR, to be closed).
 
 ## What this repo is
 
