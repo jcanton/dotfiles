@@ -1,3 +1,9 @@
+os:
+  # Inside nvim (snacks sets editPreset nvim-remote), open files in the current
+  # tab rather than the preset's --remote-tab. Outside nvim, plain nvim.
+  edit: '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}})'
+  editAtLine: '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")'
+
 customCommands:
   # Worktrees go through ~/.local/bin/git-wt: always in <main repo>/.worktrees/,
   # with the icon4py setup (testdata/pyrightconfig links, uv sync) done.
