@@ -167,10 +167,10 @@ function M.sync(tab)
     require("pr_review.files").update(review, session)
 end
 
--- The file tree replaces codediff's explorer: open it once the data is in,
--- in the review's tab.
+-- The file tree replaces codediff's explorer: open it in the review's tab as
+-- soon as codediff has the file list; GitHub's data fills in the rows later.
 local function open_files(review)
-    if not review.files_opened and review.threads and vim.api.nvim_get_current_tabpage() == review.tab then
+    if not review.files_opened and vim.api.nvim_get_current_tabpage() == review.tab then
         review.files_opened = true
         require("pr_review.files").open(review)
     end
@@ -286,6 +286,20 @@ function M.hook_codediff()
         end
     end
 
+    -- codediff reclaims its explorer keys over ours on TabEnter and on pane
+    -- buffer changes, so route its explorer actions to the file tree instead
+    local panes = require("codediff.ui.view.actions.panes")
+    for name, files_fn in pairs({ toggle_explorer = "toggle", focus_explorer = "open" }) do
+        local original = panes[name]
+        panes[name] = function(ctx, ...)
+            local review = ctx and M.reviews[ctx.tabpage]
+            if review then
+                return require("pr_review.files")[files_fn](review)
+            end
+            return original(ctx, ...)
+        end
+    end
+
     local group = vim.api.nvim_create_augroup("pr_review", { clear = true })
     vim.api.nvim_create_autocmd("User", {
         group = group,
@@ -304,6 +318,11 @@ function M.hook_codediff()
             if vim.api.nvim_get_current_tabpage() == tab then
                 vim.cmd.tcd(vim.fn.fnameescape(review.root))
             end
+            vim.schedule(function()
+                if M.reviews[tab] == review then
+                    open_files(review)
+                end
+            end)
             review:load(function()
                 local open = #vim.tbl_filter(function(t)
                     return not t.isResolved and not t.isOutdated

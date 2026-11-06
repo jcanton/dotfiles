@@ -118,7 +118,7 @@ function M.format(item, picker, review)
         if gh_file.deletions > 0 then
             right[#right + 1] = { "-" .. gh_file.deletions .. " ", "Removed" }
         end
-    else
+    elseif review.files then
         right[#right + 1] = { "local ", "Comment" }
     end
     local status = (item.cd.status or "?"):sub(1, 1)
@@ -151,31 +151,43 @@ local function open_file(review, item)
 end
 
 -- Refresh the tree and put its cursor on `path`, opening the directories
--- above it.
+-- above it. A sync and a redraw both reveal when the data comes in, and two
+-- refreshes in a row during a search list every match twice: do one per tick.
 local function reveal(review, path)
-    local picker = review.files_picker
-    for rel in pairs(review.closed_dirs) do
-        if vim.startswith(path, rel .. "/") then
-            review.closed_dirs[rel] = nil
-        end
+    local queued = review.reveal_path
+    review.reveal_path = path
+    if queued then
+        return
     end
-    picker.list:set_target()
-    picker:find({ refresh = true })
-    -- not find's on_done: it can run before the finder is done, and the
-    -- matcher then resets the cursor
-    local function view()
-        if picker.closed then
+    vim.schedule(function()
+        local picker = review.files_picker
+        path, review.reveal_path = review.reveal_path, nil
+        if not picker or picker.closed then
             return
-        elseif picker:is_active() then
-            return vim.defer_fn(view, 20)
         end
-        for item, idx in picker:iter() do
-            if item.rel == path then
-                return picker.list:view(idx)
+        for rel in pairs(review.closed_dirs) do
+            if vim.startswith(path, rel .. "/") then
+                review.closed_dirs[rel] = nil
             end
         end
-    end
-    vim.schedule(view)
+        picker.list:set_target()
+        picker:find({ refresh = true })
+        -- not find's on_done: it can run before the finder is done, and the
+        -- matcher then resets the cursor
+        local function view()
+            if picker.closed then
+                return
+            elseif picker:is_active() then
+                return vim.defer_fn(view, 20)
+            end
+            for item, idx in picker:iter() do
+                if item.rel == path then
+                    return picker.list:view(idx)
+                end
+            end
+        end
+        vim.schedule(view)
+    end)
 end
 
 -- Called after a sync: focus the diff if a file was just opened, and keep
@@ -189,7 +201,8 @@ function M.update(review, session, force)
     if not picker or picker.closed then
         return
     end
-    local path = render.shown_path(session)
+    -- no file shown yet when the tree opens with the tab
+    local path = render.shown_path(session) or ""
     local explorer = lifecycle().get_panel_view(review.tab)
     local count = explorer and explorer.tree and #require("codediff.ui.explorer").get_all_files(explorer.tree) or 0
     local key = path .. ":" .. count
