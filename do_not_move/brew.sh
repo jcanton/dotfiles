@@ -28,9 +28,9 @@ brew install bash-completion2
 
 # Switch to using brew-installed bash as default shell
 if ! fgrep -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
-  echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells;
-  chsh -s "${BREW_PREFIX}/bin/bash";
-fi;
+    echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells
+    chsh -s "${BREW_PREFIX}/bin/bash"
+fi
 
 # Install `wget` with IRI support.
 brew install wget --with-iri
@@ -85,11 +85,9 @@ brew install vbindiff
 brew install wget
 
 brew install --cask flux
-brew install --cask freecad
-brew install --cask maccy
 brew install --cask mactex-no-gui
-brew install --cask monitorcontrol
 brew install --cask skim
+brew install --cask vorssaint
 
 # Remove outdated versions from the cellar.
 brew cleanup

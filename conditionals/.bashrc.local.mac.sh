@@ -33,6 +33,45 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # Skim
 alias skim="/Applications/Skim.app/Contents/MacOS/Skim"
 
+# Vorssaint: share settings between Macs through conditionals/vorssaint.settings.
+# vorssaint-save exports this Mac's settings into the repo (commit and push them);
+# vorssaint-load replaces this Mac's settings with the file and restarts the app.
+_vorssaint_bin=/Applications/Vorssaint.app/Contents/MacOS/Vorssaint
+_vorssaint_file() {
+    local dotfiles
+    dotfiles=$(readlink ~/.functions)
+    echo "${dotfiles%/dots/.functions}/conditionals/vorssaint.settings"
+}
+vorssaint-save() {
+    local file
+    file=$(_vorssaint_file)
+    "$_vorssaint_bin" --export-settings "$file" || return
+    # The export writes JSON-in-string values with random key order; sort the keys
+    # so an unchanged setup gives an unchanged file.
+    python3 -I - "$file" <<'EOF'
+import json, plistlib, sys
+path = sys.argv[1]
+with open(path, "rb") as f:
+    backup = plistlib.load(f)
+for key, value in backup["settings"].items():
+    if isinstance(value, str) and value.startswith("{"):
+        try:
+            backup["settings"][key] = json.dumps(json.loads(value), sort_keys=True, separators=(",", ":"))
+        except ValueError:
+            pass
+with open(path, "wb") as f:
+    plistlib.dump(backup, f, sort_keys=True)
+EOF
+    git -C "${file%/conditionals/*}" status --short -- "$file"
+}
+vorssaint-load() {
+    # The import refuses to run while the app is open.
+    osascript -e 'quit app "Vorssaint"' || return
+    while pgrep -qx Vorssaint; do sleep 0.2; done
+    "$_vorssaint_bin" --import-settings "$(_vorssaint_file)" || return
+    open -a Vorssaint
+}
+
 # homebrew "new" location
 if [ -d "/opt/homebrew" ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"

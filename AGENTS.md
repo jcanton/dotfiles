@@ -27,6 +27,7 @@ A shell-script-based dotfiles manager. `bootstrap.sh` symlinks the files tracked
 - It refuses to replace an old whole-directory link whose repo directory holds untracked files; move them out first.
 - `com.googlecode.iterm2.plist` is at the repo root but is **not** bootstrapped — point to it manually from iTerm2 preferences.
 - `conditionals/.macos` is a script to run by hand; `conditionals/iTerm/` is not linked by any profile.
+- `conditionals/vorssaint.settings` is not linked either: it is a Vorssaint settings export, written by `vorssaint-save` and applied with `vorssaint-load` (both in `.bashrc.local.mac.sh`).
 
 ## Shell config chain
 
