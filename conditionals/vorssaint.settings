@@ -35,9 +35,9 @@
 			<key>BuiltInHeadphoneOutputDevice</key>
 			<string>External Headphones</string>
 			<key>BuiltInMicrophoneDevice</key>
-			<string>MacBook Air Microphone</string>
+			<string>MacBook Pro Microphone</string>
 			<key>BuiltInSpeakerDevice</key>
-			<string>MacBook Air Speakers</string>
+			<string>MacBook Pro Speakers</string>
 		</dict>
 		<key>audioPriorityInputEnabled</key>
 		<true/>
@@ -426,7 +426,7 @@
 		<key>keepAwakeActiveIcon</key>
 		<string>vorssaint</string>
 		<key>keepAwakeAllowDisplaySleep</key>
-		<false/>
+		<true/>
 		<key>keepAwakeAutoStart</key>
 		<false/>
 		<key>keepAwakeAutomationRequireAll</key>
@@ -1363,7 +1363,7 @@
 		<key>screenshotLastTextSize</key>
 		<integer>19</integer>
 		<key>screenshotLastTool</key>
-		<string>arrow</string>
+		<string>freehand</string>
 		<key>screenshotLoupeDefaultZoom</key>
 		<real>1.0</real>
 		<key>screenshotLoupeRememberZoom</key>
@@ -1395,9 +1395,9 @@
 		<key>screenshotSharingEnabled</key>
 		<true/>
 		<key>screenshotShortcut</key>
-		<string>control+option+command:21</string>
+		<string>shift+command:21</string>
 		<key>screenshotShortcutEnabled</key>
-		<false/>
+		<true/>
 		<key>screenshotShowCaptureMenuOnShortcut</key>
 		<true/>
 		<key>screenshotShowLastRegion</key>
@@ -1553,7 +1553,9 @@
 		<key>switcherWindowlessApps</key>
 		<string>finder</string>
 		<key>systemShortcutTakeOverKeys</key>
-		<array/>
+		<array>
+			<string>screenshotShortcut</string>
+		</array>
 		<key>temperatureUnit</key>
 		<string>celsius</string>
 		<key>textSnippetsEnabled</key>
