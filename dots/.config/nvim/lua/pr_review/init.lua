@@ -268,6 +268,38 @@ function M.hook_codediff()
         return foldexpr()
     end
 
+    -- codediff mirrors folds across the panes only for the z keys; a fold
+    -- opened by a search, l, a mark, undo, a click or a jump opens on one side
+    -- and the panes drift apart. Each of those leaves the cursor in the opened
+    -- fold: open the matching fold of the other pane too.
+    vim.api.nvim_create_autocmd("CursorMoved", {
+        group = vim.api.nvim_create_augroup("pr_review_folds", { clear = true }),
+        callback = function()
+            local session = lifecycle().get_session(vim.api.nvim_get_current_tabpage())
+            if not (session and session.compact_mode and session.layout ~= "inline") then
+                return
+            end
+            local win = vim.api.nvim_get_current_win()
+            local side = win == session.original_win and "original" or win == session.modified_win and "modified"
+            local changes = session.stored_diff_result and session.stored_diff_result.changes
+            if not (side and changes) or vim.fn.foldlevel(".") == 0 or vim.fn.foldclosed(".") ~= -1 then
+                return
+            end
+            local other = side == "original" and "modified" or "original"
+            local other_win = session[other .. "_win"]
+            if not (other_win and vim.api.nvim_win_is_valid(other_win)) then
+                return
+            end
+            local lnum = compact.compute_corresponding_lnum(changes, side, other, vim.fn.line("."))
+            vim.api.nvim_win_call(other_win, function()
+                lnum = math.max(1, math.min(lnum, vim.fn.line("$")))
+                if vim.fn.foldclosed(lnum) ~= -1 then
+                    vim.cmd(lnum .. "foldopen")
+                end
+            end)
+        end,
+    })
+
     -- ]f / [f move the cursor in codediff's explorer window, which the file
     -- tree replaces (hidden: winid nil, and nvim_win_is_valid(nil) throws)
     local explorer = require("codediff.ui.explorer")
