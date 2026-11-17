@@ -114,5 +114,8 @@
                 }
             }
         }
-    }
+    },
+    "plugins": [
+        "@statusline/opencode-plugin"
+    ]
 }
