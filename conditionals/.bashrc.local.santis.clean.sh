@@ -71,7 +71,7 @@ function buildIcon4py() {
     export MPICH_CC=$(which gcc)
     export MPICH_GPU_SUPPORT_ENABLED=1
     useUenvCompilers
-    uv sync --no-binary-package mpi4py --extra all --extra distributed --extra cuda12 --python $(which python) --refresh --group scripts
+    uv sync --no-binary-package mpi4py --extra all --extra distributed --extra cuda13 --python $(which python) --refresh --group scripts
 }
 export GT4PY_BUILD_CACHE_LIFETIME=persistent
 export GT4PY_UNSTRUCTURED_HORIZONTAL_HAS_UNIT_STRIDE=1
