@@ -47,6 +47,23 @@ return {
                         },
                     },
                 },
+                -- notification history (<leader>n): y / <c-y> copies the
+                -- message to the clipboard
+                notifications = {
+                    actions = {
+                        yank_msg = function(picker, item)
+                            if item then
+                                vim.fn.setreg("+", item.item.msg)
+                                picker:close()
+                                Snacks.notify("Copied the notification to the clipboard")
+                            end
+                        end,
+                    },
+                    win = {
+                        input = { keys = { ["<c-y>"] = { "yank_msg", mode = { "i", "n" } }, ["y"] = "yank_msg" } },
+                        list = { keys = { ["y"] = "yank_msg" } },
+                    },
+                },
                 -- grep picker configuration
                 grep = {
                     -- search hidden files too

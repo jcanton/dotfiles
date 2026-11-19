@@ -68,6 +68,19 @@ return {
         },
     },
     {
+        "folke/noice.nvim",
+        opts = function(_, opts)
+            opts.routes = opts.routes or {}
+            -- codediff's synced z keys miss the other pane's fold on a fold's
+            -- first line next to a deletion and log it; pr_review mirrors the
+            -- fold right after (see hook_codediff)
+            table.insert(opts.routes, {
+                filter = { event = "notify", find = "^%[codediff%] synced%-fold error" },
+                opts = { skip = true },
+            })
+        end,
+    },
+    {
         "nvim-lualine/lualine.nvim",
         opts = function(_, opts)
             table.insert(opts.sections.lualine_x, 1, {

@@ -947,6 +947,12 @@ function M.attach(review, buf)
     end
     local k = init().config.keys
     review.mapped[buf] = {}
+    -- codediff mutes diagnostics only in the buffers it loads from git; mute
+    -- the worktree files too, so the threads aren't buried under LSP noise
+    if vim.diagnostic.is_enabled({ bufnr = buf }) then
+        review.muted[buf] = true
+        vim.diagnostic.enable(false, { bufnr = buf })
+    end
     -- hidden again by which-key once the review's keys are gone
     local ok, wk = pcall(require, "which-key")
     if ok then

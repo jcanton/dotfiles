@@ -3,12 +3,13 @@ return {
     opts = {
         -- LazyVim also pairs in the cmdline, so / searches for "run(" got "run()"
         modes = { command = false },
-        -- quotes don't pair after a letter or digit, so closing a word's quote
-        -- (or typing an apostrophe) doesn't add another; brackets still do
+        -- quotes pair only after whitespace, the line start or an opening
+        -- bracket: closing one after a word or symbol (refine_*`, an
+        -- apostrophe) doesn't add another. Brackets still pair anywhere.
         mappings = {
-            ['"'] = { neigh_pattern = "^[^%w\\]" },
-            ["'"] = { neigh_pattern = "^[^%w\\]" },
-            ["`"] = { neigh_pattern = "^[^%w\\]" },
+            ['"'] = { neigh_pattern = "^[%s%(%[{]" },
+            ["'"] = { neigh_pattern = "^[%s%(%[{]" },
+            ["`"] = { neigh_pattern = "^[%s%(%[{]" },
         },
     },
 }

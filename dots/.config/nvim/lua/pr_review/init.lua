@@ -32,16 +32,16 @@ M.config = {
         comment = "<leader>rc",
         file_comment = "<leader>rC",
         reply = "<leader>rr",
-        react = "<leader>re",
+        react = "<leader>rE",
         resolve = "<leader>rx",
-        edit = "<leader>rE",
-        delete = "<leader>rD",
+        edit = "<leader>re",
+        delete = "<leader>rd",
         toggle = "<leader>rz",
         outdated = "<leader>ro",
         viewed = "<leader>rv",
         start = "<leader>rs",
         submit = "<leader>rS",
-        discard = "<leader>rd",
+        discard = "<leader>rD",
         browse = "<leader>rb",
         overview = "<leader>rp",
         refresh = "<leader>rR",
@@ -65,6 +65,7 @@ M.config = {
 ---@field drawn table<integer, boolean> buffers with our marks
 ---@field mapped table<integer, string[][]> buffer -> {mode, lhs} we mapped
 ---@field keep_key table<integer, string> buffer -> keep set we last folded with
+---@field muted table<integer, boolean> buffers whose diagnostics we turned off
 local Review = {}
 Review.__index = Review
 
@@ -79,6 +80,7 @@ function Review.new(repo, number, root)
         drawn = {},
         mapped = {},
         keep_key = {},
+        muted = {},
     }, Review)
 end
 
@@ -220,6 +222,11 @@ function M.close(tab)
             end
         end
     end
+    for buf in pairs(review.muted) do
+        if vim.api.nvim_buf_is_valid(buf) then
+            vim.diagnostic.enable(true, { bufnr = buf })
+        end
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -268,37 +275,134 @@ function M.hook_codediff()
         return foldexpr()
     end
 
-    -- codediff mirrors folds across the panes only for the z keys; a fold
-    -- opened by a search, l, a mark, undo, a click or a jump opens on one side
-    -- and the panes drift apart. Each of those leaves the cursor in the opened
-    -- fold: open the matching fold of the other pane too.
-    vim.api.nvim_create_autocmd("CursorMoved", {
-        group = vim.api.nvim_create_augroup("pr_review_folds", { clear = true }),
-        callback = function()
-            local session = lifecycle().get_session(vim.api.nvim_get_current_tabpage())
-            if not (session and session.compact_mode and session.layout ~= "inline") then
+    -- codediff widens a pure insertion or deletion (an empty range) to one
+    -- line, so the side without lines shows a line too many below it and the
+    -- folds after it start one line apart. Treat the empty range as the
+    -- boundary it is, as esmuellert/codediff.nvim#512 does; drop this once
+    -- that is released.
+    compact.compute_visible_lines = function(changes, side, line_count, context_lines)
+        local visible = {}
+        for _, change in ipairs(changes) do
+            local range = change[side]
+            for l = math.max(1, range.start_line - context_lines), math.min(line_count, range.end_line - 1 + context_lines) do
+                visible[l] = true
+            end
+        end
+        return visible
+    end
+
+    -- codediff mirrors folds across the panes only for the z keys: a fold
+    -- opened by a search, l, a mark, undo, a jump or a click in the fold column
+    -- changes one side and the panes drift apart. Even the z keys miss on a
+    -- fold's first line next to a deleted line: codediff keeps one more line
+    -- of context open on one side, so that line maps to an unfolded line.
+
+    -- Give the fold at `lnum` of diff pane `win` the same state (open or
+    -- closed) in the other pane.
+    local function mirror_fold(win, lnum)
+        local session = lifecycle().get_session(vim.api.nvim_win_get_tabpage(win))
+        if not (session and session.compact_mode and session.layout ~= "inline") then
+            return
+        end
+        local side = win == session.original_win and "original" or win == session.modified_win and "modified"
+        local changes = session.stored_diff_result and session.stored_diff_result.changes
+        local other = side == "original" and "modified" or "original"
+        local other_win = session[other .. "_win"]
+        if not (side and changes and other_win and vim.api.nvim_win_is_valid(other_win)) then
+            return
+        end
+        -- the fold's state and line range (compact folds are runs of level 1)
+        local fold = vim.api.nvim_win_call(win, function()
+            if vim.fn.foldlevel(lnum) == 0 then
                 return
             end
-            local win = vim.api.nvim_get_current_win()
-            local side = win == session.original_win and "original" or win == session.modified_win and "modified"
-            local changes = session.stored_diff_result and session.stored_diff_result.changes
-            if not (side and changes) or vim.fn.foldlevel(".") == 0 or vim.fn.foldclosed(".") ~= -1 then
-                return
+            if vim.fn.foldclosed(lnum) ~= -1 then
+                return { true, vim.fn.foldclosed(lnum), vim.fn.foldclosedend(lnum) }
             end
-            local other = side == "original" and "modified" or "original"
-            local other_win = session[other .. "_win"]
-            if not (other_win and vim.api.nvim_win_is_valid(other_win)) then
-                return
+            local s, e, n = lnum, lnum, vim.fn.line("$")
+            while s > 1 and vim.fn.foldlevel(s - 1) > 0 do
+                s = s - 1
             end
-            local lnum = compact.compute_corresponding_lnum(changes, side, other, vim.fn.line("."))
-            vim.api.nvim_win_call(other_win, function()
-                lnum = math.max(1, math.min(lnum, vim.fn.line("$")))
-                if vim.fn.foldclosed(lnum) ~= -1 then
-                    vim.cmd(lnum .. "foldopen")
+            while e < n and vim.fn.foldlevel(e + 1) > 0 do
+                e = e + 1
+            end
+            return { false, s, e }
+        end)
+        if not fold then
+            return
+        end
+        local closed, first, last = unpack(fold)
+        local function map(l)
+            return compact.compute_corresponding_lnum(changes, side, other, l)
+        end
+        vim.api.nvim_win_call(other_win, function()
+            local n = vim.fn.line("$")
+            local target = math.max(1, math.min(map(lnum), n))
+            -- the line may map just outside the matching fold: take any line
+            -- of that fold
+            if vim.fn.foldlevel(target) == 0 then
+                target = nil
+                for l = math.max(1, map(first)), math.min(map(last), n) do
+                    if vim.fn.foldlevel(l) > 0 then
+                        target = l
+                        break
+                    end
                 end
-            end)
-        end,
+            end
+            if target and (vim.fn.foldclosed(target) ~= -1) ~= closed then
+                vim.cmd(target .. (closed and "foldclose" or "foldopen"))
+            end
+        end)
+    end
+
+    -- codediff describes its fold keys as "codediff: synced fold zo": say what
+    -- they do instead
+    local fold_desc = {
+        zo = "Open fold",
+        zO = "Open folds recursively",
+        zc = "Close fold",
+        zC = "Close folds recursively",
+        za = "Toggle fold",
+        zA = "Toggle folds recursively",
+        zv = "Open folds to show cursor line",
+        zx = "Refold, showing cursor line",
+        zX = "Refold",
+        zM = "Close all folds",
+        zR = "Open all folds",
+    }
+    local set_buf_keymap = lifecycle().set_buf_keymap
+    lifecycle().set_buf_keymap = function(tabpage, buf, mode, lhs, rhs, opts, ...)
+        if opts and fold_desc[lhs] and opts.desc == "codediff: synced fold " .. lhs then
+            opts = vim.tbl_extend("force", opts, { desc = fold_desc[lhs] .. " (both panes)" })
+        end
+        return set_buf_keymap(tabpage, buf, mode, lhs, rhs, opts, ...)
+    end
+
+    local function mirror_cursor_fold()
+        mirror_fold(vim.api.nvim_get_current_win(), vim.fn.line("."))
+    end
+
+    -- after every command (z keys included, for the line codediff misses),
+    -- once it is done: which-key replays the keys it waited on later
+    vim.api.nvim_create_autocmd("SafeState", {
+        group = vim.api.nvim_create_augroup("pr_review_folds", { clear = true }),
+        callback = mirror_cursor_fold,
     })
+
+    -- a click in the fold column toggles the fold without moving the cursor
+    -- (or in the other pane): mirror it right away, closing included
+    local ok, statuscolumn = pcall(require, "snacks.statuscolumn")
+    if ok then
+        local click_fold = statuscolumn.click_fold
+        statuscolumn.click_fold = function(...)
+            local pos = vim.fn.getmousepos()
+            local ret = click_fold(...)
+            if vim.api.nvim_win_is_valid(pos.winid) and pos.line > 0 then
+                mirror_fold(pos.winid, pos.line)
+            end
+            return ret
+        end
+    end
 
     -- ]f / [f move the cursor in codediff's explorer window, which the file
     -- tree replaces (hidden: winid nil, and nvim_win_is_valid(nil) throws)
