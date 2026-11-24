@@ -89,67 +89,31 @@ test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shel
 # tmux swallows it, but the pointer set by the outer shell survives into tmux.
 [[ $TERM_PROGRAM == iTerm.app ]] && printf '\e]22;left_ptr\e\\'
 
-# >>> claude-auto-retry >>>
-# Drop any pre-existing `claude` alias (Claude Code's own installer adds one)
-# before defining the wrapper function. Without this, the shell expands the
-# alias while parsing `claude() {`, producing "syntax error near unexpected
-# token '('" when the rc file is sourced.
-unalias claude 2>/dev/null || true
-claude() {
-  # Degrade to plain claude if already inside a wrapped session, or if the launcher
-  # is gone (package removed via `npm uninstall -g` without `claude-auto-retry
-  # uninstall` first) — an orphaned wrapper must never break the claude command.
-  if [ "${CLAUDE_AUTO_RETRY_ACTIVE}" = "1" ] || [ ! -e "/opt/homebrew/lib/node_modules/claude-auto-retry/src/launcher.js" ]; then
-    command claude "$@"
-    return $?
-  fi
-  export CLAUDE_AUTO_RETRY_ACTIVE=1
-  local _car_exit
-  if [ -n "${ZSH_VERSION:-}" ]; then
-    # zsh: localtraps restores the user's INT/TERM traps automatically on function
-    # return. Capture/restore is NOT portable here — `trap -p` is a bashism (zsh
-    # treats it as setting a handler), and $(trap) runs in a subshell where zsh
-    # lists nothing — so the bash-style path silently wiped the user's traps.
-    setopt localoptions localtraps
-    trap 'unset CLAUDE_AUTO_RETRY_ACTIVE' INT TERM
-    node "/opt/homebrew/lib/node_modules/claude-auto-retry/src/launcher.js" "$@"
-    _car_exit=$?
-  else
-    # bash: function traps are global, so capture and restore around ours.
-    local _car_old_int_trap _car_old_term_trap
-    _car_old_int_trap=$(trap -p INT 2>/dev/null)
-    _car_old_term_trap=$(trap -p TERM 2>/dev/null)
-    trap 'unset CLAUDE_AUTO_RETRY_ACTIVE' INT TERM
-    node "/opt/homebrew/lib/node_modules/claude-auto-retry/src/launcher.js" "$@"
-    _car_exit=$?
-    # Restore previous traps instead of clobbering them
-    eval "${_car_old_int_trap:-trap - INT}"
-    eval "${_car_old_term_trap:-trap - TERM}"
-  fi
-  unset CLAUDE_AUTO_RETRY_ACTIVE
-  return $_car_exit
-}
-# <<< claude-auto-retry <<<
-
-
 # >>> icon4py dev scripts >>>
 # The scripts/* shebang uses "uv run --isolated", which rebuilds a throwaway
 # environment on every call (~4s). Invoking uv ourselves bypasses it (~0.3s).
 # See C2SM/icon4py#1419.
 _i4_run() {
-    local entry=$1; shift
+    local entry=$1
+    shift
     local root venv
-    root=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "i4: not in a git repo" >&2; return 1; }
-    [ -f "$root/$entry" ] || { echo "i4: no $entry in $root" >&2; return 1; }
+    root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+        echo "i4: not in a git repo" >&2
+        return 1
+    }
+    [ -f "$root/$entry" ] || {
+        echo "i4: no $entry in $root" >&2
+        return 1
+    }
     venv="$root/.venv/bin/python"
     # Pin to the venv's own interpreter: without this uv follows .python-version and
     # deletes/rebuilds a venv that was created with a different python.
     if [ -x "$venv" ]; then
-        ( cd "$root" && UV_PYTHON="$venv" uv run -q --frozen --group scripts python3 "$entry" "$@" )
+        (cd "$root" && UV_PYTHON="$venv" uv run -q --frozen --group scripts python3 "$entry" "$@")
     else
-        ( cd "$root" && uv run -q --frozen --group scripts python3 "$entry" "$@" )
+        (cd "$root" && uv run -q --frozen --group scripts python3 "$entry" "$@")
     fi
 }
-i4()  { _i4_run scripts/run  "$@"; }   # e.g. i4 inspect-savepoints savepoints -e exclaim_ape_aesPhys
+i4() { _i4_run scripts/run "$@"; } # e.g. i4 inspect-savepoints savepoints -e exclaim_ape_aesPhys
 i4t() { _i4_run scripts/test "$@"; }
 # <<< icon4py dev scripts <<<
