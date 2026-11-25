@@ -20,6 +20,9 @@ must begin with `cscs-ci run`, so they carry neither prefix nor footer.
 Write code comments, docstrings, commit messages, PR descriptions and review comments following
 the `house-style` skill.
 
+Wrap Markdown prose at 80 columns. A hook runs prettier on Markdown files you create; when you edit
+an existing file, follow its wrapping instead of rewrapping it.
+
 # Verification
 
 In icon4py, run the `icon4py-verify` skill right before committing (not for docs-only or

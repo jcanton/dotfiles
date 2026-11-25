@@ -2,9 +2,9 @@ return {
     "saghen/blink.cmp",
 
     opts = function(_, opts)
-        -- Off by default here; <leader>uk still toggles per buffer.
+        -- Off by default in these filetypes; <leader>uk still toggles per buffer.
         -- Snacks picker inputs are prompt buffers, which blink already skips.
-        local disabled_filetypes = { "gitcommit", "gitrebase" }
+        local disabled_filetypes = { "gitcommit", "gitrebase", "markdown" }
 
         local function enabled()
             if vim.b.completion ~= nil then
