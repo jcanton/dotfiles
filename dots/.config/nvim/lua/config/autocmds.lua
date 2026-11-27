@@ -103,6 +103,54 @@ vim.api.nvim_create_autocmd("TermClose", {
 })
 
 --------------------------------------------------------------------------------
+--- Explorer git status --------------------------------------------------------
+--------------------------------------------------------------------------------
+
+-- The snacks explorer caches git status for 15 minutes and re-reads it early
+-- only when it sees <root>/.git/index change. In a worktree .git is a file and
+-- the index lives in the git dir it points at, so watch that instead. watch()
+-- stops watches it did not start, so restart ours after every call.
+do
+    local Git = require("snacks.explorer.git")
+    local Watch = require("snacks.explorer.watch")
+
+    -- nil for a regular repo
+    local function worktree_git_dir(root)
+        local stat = vim.uv.fs_stat(root .. "/.git")
+        if not (stat and stat.type == "file") then
+            return nil
+        end
+        local f = io.open(root .. "/.git")
+        local line = f and f:read("*l")
+        if f then
+            f:close()
+        end
+        local dir = line and line:match("^gitdir: (.+)$")
+        if not dir then
+            return nil
+        end
+        return vim.fs.normalize(vim.startswith(dir, "/") and dir or root .. "/" .. dir)
+    end
+
+    local watch = Watch.watch
+    Watch.watch = function()
+        watch()
+        for _, picker in ipairs(Snacks.picker.get({ source = "explorer", tab = false })) do
+            local root = Snacks.git.get_root(picker:cwd())
+            local git_dir = root and worktree_git_dir(root)
+            if git_dir then
+                Watch.start(git_dir, function(file)
+                    if vim.fs.basename(file) == "index" then
+                        Git.refresh(root)
+                        Watch.refresh()
+                    end
+                end)
+            end
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
 --- DAP ------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
