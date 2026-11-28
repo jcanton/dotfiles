@@ -44,6 +44,9 @@ brew install neovim
 brew install tree-sitter-cli # nvim-treesitter parser installs
 brew install grep
 brew install openssh
+# 3.8 replaced the command prompt's completion menu with an inline list; this
+# Mac runs 3.7c from the local jcanton/pinned tap (Formula/tmux@3.7c.rb), linked
+# with `brew link --force tmux@3.7c`.
 brew install tmux
 brew install php
 brew install gmp
