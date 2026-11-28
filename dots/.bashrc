@@ -2,6 +2,10 @@
 [[ $- != *i* ]] && return
 [[ -n "$SLURM_JOB_ID" ]] && return
 
+# The login shell on Synology DSM is sh, which is bash that turns on POSIX mode
+# once it has read these files: run a plain bash instead.
+[[ $0 == -sh ]] && exec bash
+
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
